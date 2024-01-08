@@ -1,0 +1,131 @@
+.blgcomment-list>li:nth-child(n+2) {
+    margin-block-start: 15px !important;
+}
+.custom-card {
+    border: 1px solid #ced4da;
+}
+.customizer-action svg{
+    width: 23px !important;
+    color: #ffffff !important;
+}
+.active-mode{
+    border: solid 2px #000000 !important;
+}
+.property-img{
+    max-width: 507px;
+    max-height: 286px;
+}
+.text-justify{
+    text-align: justify;
+}
+.custom .media{
+    padding: 10px !important;
+}
+.user-avatar{
+    width: 30px;
+    height: 30px;
+}
+@media only screen and (max-width: 410px) {
+    .header_li {
+        display: none !important;
+    }
+}
+.blgcomment-list li .media img{
+    width: auto;
+    height: 40px !important;
+}
+
+#card-element {
+    border: 1px solid #e5e5e5 !important;
+    border-radius: 5px !important;
+    padding: 13px !important;
+}
+.codex-sidebar .logo-gridwrap, .codex-sidebar .icon-logo{
+    padding: 0px 16px !important;
+}
+
+.setting-logo{
+    width:200px !important;;
+}
+
+.landing-logo{
+    width: 180px !important;
+    scale: 0.85 !important;
+}
+.lan-footer .codex-brand{
+    margin-block-end: 0px !important;
+}
+.invoice-logo{
+    width: 50%;
+}
+
+.codexbrand-logo img.img-fluid
+{
+    scale: 0.8 !important;
+}
+
+.note-editable
+{
+    background-color: white !important;
+}
+
+.corps_journal
+{
+    max-width: 150px !important;
+    overflow: hidden !important;
+}
+
+.head_previewEmail
+{
+    margin-bottom: 10px;
+    text-align: center !important;
+}
+
+.previewEmail
+{
+    background: white;
+    border: 1px solid rgb(193, 193, 193);
+    padding: 25px;
+}
+
+.champs_personnalisables
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 40px !important;
+}
+
+.variable
+{
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    background: white;
+    padding: 0px 10px;
+    border: 1px solid rgb(219, 219, 219);
+    border-radius: 5px;
+    margin: 5px 3px;
+    min-width: max-content;
+    color: #000000;
+    box-shadow: 0px 0px 3px 1px #8897a92d;
+    transition: 0.2s;
+}
+
+.variable:hover,
+.variable:active,
+.variable:focus
+{
+    cursor: pointer;
+    transition: 0.2s;
+    color: #6a7786;
+    box-shadow: 0px 0px 3px 1px #8897a966;
+}
+
+.clicked::after
+{
+    display: flex;
+    margin-left: 10px;
+    content: 'copied';
+    opacity: 0.5;
+}
