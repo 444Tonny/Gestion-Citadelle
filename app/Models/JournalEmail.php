@@ -22,5 +22,6 @@ class JournalEmail extends Model
         'statut_journal',
         'raison_echec',
         'date_envoi',
+        'parent_id',
     ];
 }

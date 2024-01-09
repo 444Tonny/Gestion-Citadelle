@@ -24,9 +24,12 @@ class EmailSendingController extends Controller
         {
             if (\Auth::user()->can('manage invoice')) 
             {
-                if(\Auth::user()->type=='tenant'){ }
-                
-                $journauxEmail = JournalEmail::orderBy('date_envoi', 'desc')->get();
+                $user = \Auth::user();
+
+                $journauxEmail = JournalEmail::where('parent_id', '=', $user->parentId())
+                    ->orderBy('date_envoi', 'desc')
+                    ->get();
+
                 //dd($journauxEmail);
 
                 return view('emails.index', compact('journauxEmail'));

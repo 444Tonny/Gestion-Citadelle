@@ -47,7 +47,6 @@ class User extends Authenticatable
     }
     public function parentId()
     {
-
         if($this->type == 'admin' || $this->type == 'super admin')
         {
             return $this->id;

@@ -37,6 +37,8 @@ class EmailService
 
     public function sendEmail($destinataire, $sujet, $htmlContent, $message = null)
     {
+        $user = \Auth::user();
+
         $is_sent = false;
 
         try {
@@ -46,6 +48,7 @@ class EmailService
             $newEmail->email_destinataire = $destinataire->email;
             $newEmail->sujet_journal = $sujet;
             $newEmail->corps_journal = $htmlContent;
+            $newEmail->parent_id = $user->parentId();
             $newEmail->date_envoi = Carbon::now('America/Toronto');
 
             if($message != null) 
@@ -73,6 +76,8 @@ class EmailService
 
     private function handleException($destinataire, $sujet, $htmlContent, $errorMessage)
     {
+        $user = \Auth::user();
+
         Log::error('Failed to send email: ' . $errorMessage);
 
         $newEmail = new JournalEmail();
@@ -81,6 +86,7 @@ class EmailService
         $newEmail->email_destinataire = $destinataire->email;
         $newEmail->sujet_journal = $sujet;
         $newEmail->corps_journal = $htmlContent;
+        $newEmail->parent_id = $user->parentId();
         $newEmail->date_envoi = now();
         $newEmail->raison_echec = $errorMessage;
         $newEmail->statut_journal = 'Échec';
