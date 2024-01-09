@@ -8,19 +8,17 @@
             <a href="{{route('dashboard')}}"><h1>{{__('Dashboard')}}</h1></a>
         </li>
         <li class="breadcrumb-item active">
-            <a href="#">Envoi d'email</a>
+            <a href="#">Emails automatiques</a>
         </li>
     </ul>
 @endsection
 @section('card-action-btn')
-    @can('create invoice')
         <a class="btn btn-primary btn-sm ml-20 customModal" href="#" data-size="md"
-           data-url="{{ route('typeForm') }}"
+           data-url="{{ route('newAutoForm') }}"
            data-title="Nouvel envoi"> <i
                 class="ti-plus mr-5"></i>
-                Nouvel envoi
+                Nouveau
         </a>
-    @endcan
 @endsection
 @section('content')
     <div class="row">
@@ -31,31 +29,31 @@
                     <table id="journalEmailTable" class="display dataTable cell-border datatbl-advance">
                         <thead>
                             <tr>
-                                <th id='dateEnvoi' class='sorting_desc'>Date envoi</th>
+                                <th>No</th>
                                 <th>Sujet</th>
-                                <th>Destinataire</th>
+                                <th>Occurence</th>
                                 <th>Statut </th>
                                 <th>Action </th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            @foreach($journauxEmail as $email)
+                            @foreach($triggers as $trigger)
                             <tr role="row">
-                                <td> {{ \Carbon\Carbon::parse($email->date_envoi)->format('j M Y') }} </td>
-                                <td> {{ $email->sujet_journal }} </td>
-                                <td> {{ $email->email_destinataire }} </td>
+                                <td> {{ $trigger->id_trigger }} </td>
+                                <td> {{ $trigger->type }} </td>
+                                <td> {{ $trigger->readableExpression  }} </td>
                                 <td>
-                                    <span class="badge {{ $email->statut_journal === 'Echec' ? 'badge-danger' : 'badge-success' }}">
-                                        {{ $email->statut_journal }}
+                                    <span class="badge {{ $trigger->is_active === false ? 'badge-danger' : 'badge-success' }}">
+                                        {{ $trigger->is_active }}
                                     </span>
                                 </td>    
                                 <td style='text-align:center;'>
-                                    <form method="POST" action="{{ route('emails.destroy', ['email' => $email->id_journal]) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet email?');">
+                                    <form method="POST" action="{{ route('emailsAuto.destroy', ['emailsAuto' => $trigger->id_trigger]) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce déclencheur?');">
                                         @csrf
                                         @method('DELETE')
                                         <a class="text-warning customModal" href="#"
-                                            data-bs-toggle="tooltip" data-title="Details email" data-url="{{ route('showDetails', $email->id_journal) }}"
+                                        
                                             data-bs-original-title="Details"> 
                                             <i data-feather="eye"></i>
                                         </a>
@@ -73,6 +71,3 @@
         </div>
     </div>
 @endsection
-
-
-

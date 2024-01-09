@@ -194,7 +194,7 @@
                         @endif
                 @endif
 
-                <!-- Email template -->
+                <!-- Email -->
 
                 @if(Gate::check('manage property') || Gate::check('manage tenant') || Gate::check('manage invoice') || Gate::check('manage expense') || Gate::check('manage maintainer') || Gate::check('manage maintenance request'))
                     <li class="cdxmenu-title">
@@ -217,9 +217,18 @@
                             </a>
                         </li>
                     @endif
+
+                    @if(Gate::check('manage invoice'))
+                        <li class="menu-item {{(Request::route()->getName() == 'emailsAuto.index' || Request::route()->getName() == 'emailsAuto.create' || Request::route()->getName() == 'emailsAuto.edit' || Request::route()->getName() == 'emailsAuto.show')?'active':''}}">
+                            <a href="{{route('emailsAuto.index')}}">
+                                <div class="icon-item"><i data-feather="settings"></i></div>
+                                <span>Automatisation</span>
+                            </a>
+                        </li>
+                    @endif
                 @endif
 
-                <!-- Email template end -->
+                <!-- Email end -->
 
                 @if(Gate::check('manage contact') || Gate::check('manage support') || Gate::check('manage note'))
                     <li class="cdxmenu-title">

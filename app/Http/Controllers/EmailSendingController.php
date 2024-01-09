@@ -27,6 +27,7 @@ class EmailSendingController extends Controller
                 if(\Auth::user()->type=='tenant'){ }
                 
                 $journauxEmail = JournalEmail::orderBy('date_envoi', 'desc')->get();
+                //dd($journauxEmail);
 
                 return view('emails.index', compact('journauxEmail'));
             } 

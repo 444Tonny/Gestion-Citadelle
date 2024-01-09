@@ -253,11 +253,26 @@ Route::group(
 
     Route::post('emails/send', [EmailSendingController::class,'sendSingleEmail'])->name('sendEmail');
     Route::post('emails/sendgroup', [EmailSendingController::class,'sendGroup'])->name('sendGroup');
-    
-    Route::post('emails/sendauto', [EmailAutomationController::class,'sendAuto'])->name('sendAuto');
 
     Route::resource('emails', EmailSendingController::class);
 }
+);
+
+//------------------------------- Emails Automatiques -------------------------------------------
+
+Route::group(
+        [
+            'middleware' => [
+                'auth',
+                'XSS',
+            ],
+        ], function (){
+
+        Route::get('emailsAuto/new', [EmailAutomationController::class,'chooseTemplate'])->name('newAutoForm');
+        Route::post('emailsAuto/new', [EmailAutomationController::class,'showAutoForm'])->name('showAutoForm');
+
+        Route::resource('emailsAuto', EmailAutomationController::class);
+    }
 );
 
 //-------------------------------Expense-------------------------------------------

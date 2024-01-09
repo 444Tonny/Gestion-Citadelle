@@ -31,100 +31,107 @@
 @section('content')
     {{ Form::open(['route' => 'sendGroup', 'method' => 'post', 'id' => 'templateForm']) }}
 
-    <div class="modal-body">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    {{ Form::label('Destinataires', 'Destinataire',['class'=>'form-label']) }}
-                    <br>
-                    <input type="checkbox" id="checkbox1" onchange="checkSpecificType(this, 'tenant')">     
-                    {{ Form::label('', 'Tous les locataires',['class'=>'form-label thin']) }}
-                    <br>
-                    <input type="checkbox" id="checkbox1" onchange="checkSpecificType(this, 'manager')">     
-                    {{ Form::label('', 'Tous les managers',['class'=>'form-label thin']) }}
-                    <br>
-                    <input type="checkbox" id="checkbox1" value='tenant' onchange="checkSpecificType(this, 'maintainer')">     
-                    {{ Form::label('', 'Tous les maintainers',['class'=>'form-label thin']) }}
-                </div>  
-            </div>
-
-
-            <table class="display dataTable cell-border datatbl-advance">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" id="checkboxSelectAll" onchange="checkAll(this)"></th>
-                        <th>Email</th>
-                        <th>Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($users as $user)
-                    <tr role='row'>
-                        <td><input type="checkbox" class="checkboxUser" name='selectedUsers[]' data-type='{{ $user->type }}' value='{{ $user->id }}'></td>
-                        <td>{{ $user->email }}</td>
-                        <td class='userType'>{{ $user->type }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
-            <div class="col-md-12">
-                <div class="form-group">
-                    {{Form::label('Sujet', 'Sujet', array('class'=>'form-label'))}}
-                    {{Form::text('sujet',$template[0]->sujet, array('class'=>'form-control','placeholder'=> 'Sujet...' ,'required'=>'required'))}}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        {{ Form::label('Destinataires', 'Destinataire',['class'=>'form-label']) }}
+                        <br>
+                        <input type="checkbox" id="checkbox1" onchange="checkSpecificType(this, 'tenant')">     
+                        {{ Form::label('', 'Tous les locataires',['class'=>'form-label thin']) }}
+                        <br>
+                        <input type="checkbox" id="checkbox1" onchange="checkSpecificType(this, 'manager')">     
+                        {{ Form::label('', 'Tous les managers',['class'=>'form-label thin']) }}
+                        <br>
+                        <input type="checkbox" id="checkbox1" value='tenant' onchange="checkSpecificType(this, 'maintainer')">     
+                        {{ Form::label('', 'Tous les maintainers',['class'=>'form-label thin']) }}
+                    </div>  
                 </div>
-            </div>
 
-            <div class="col-md-12">
-                <div class="form-group">
-                    {{Form::label('Variables', 'variable', array('class'=>'form-label'))}}
-                    <div class='champs_personnalisables'>
-                        <span class='variable' onclick="copyContent(this, '{First_Name}')">{First_Name}</span>
-                        <span class='variable' onclick="copyContent(this, '{Last_Name}')">{Last_Name}</span>
-                        <span class='variable' onclick="copyContent(this, '{Payment_Total}')">{Payment_Total}</span>
-                        <span class='variable' onclick="copyContent(this, '{Payment_Due}')">{Payment_Due}</span>
-                        <span class='variable' onclick="copyContent(this, '{Invoice_Month}')">{Invoice_Month}</span>
+
+                <table class="display dataTable cell-border datatbl-advance">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="checkboxSelectAll" onchange="checkAll(this)"></th>
+                            <th>Email</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($users as $user)
+                        <tr role='row'>
+                            <td><input type="checkbox" class="checkboxUser" name='selectedUsers[]' data-type='{{ $user->type }}' value='{{ $user->id }}'></td>
+                            <td>{{ $user->email }}</td>
+                            <td class='userType'>{{ $user->type }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+        <div class="card">
+            <div class="card-body">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            {{Form::label('Sujet', 'Sujet', array('class'=>'form-label'))}}
+                            {{Form::text('sujet',$template[0]->sujet, array('class'=>'form-control','placeholder'=> 'Sujet...' ,'required'=>'required'))}}
+                        </div>
                     </div>
-                </div>
-            </div>            
 
-            <div class="col-md-12">
-                <div class="form-group">
-                    {{Form::label('Corps', 'Corps', array('class'=>'form-label'))}}
-                    <textarea id="corps_modele" class='corps_modele' name="corps_modele"></textarea>
-                </div>
-            </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            {{Form::label('Variables', 'variable', array('class'=>'form-label'))}}
+                            <div class='champs_personnalisables'>
+                                <span class='variable' onclick="copyContent(this, '{First_Name}')">{First_Name}</span>
+                                <span class='variable' onclick="copyContent(this, '{Last_Name}')">{Last_Name}</span>
+                                <span class='variable' onclick="copyContent(this, '{Payment_Total}')">{Payment_Total}</span>
+                                <span class='variable' onclick="copyContent(this, '{Payment_Due}')">{Payment_Due}</span>
+                                <span class='variable' onclick="copyContent(this, '{Invoice_Month}')">{Invoice_Month}</span>
+                            </div>
+                        </div>
+                    </div>            
 
-            <script>
-                function checkSpecificType(checkbox, userType) {
-                    var dataTable = $('.dataTable').DataTable();
-    
-                    if (checkbox.checked) {
-                        // La case à cocher est cochée, sélectionnez toutes les cases à cocher du même type
-                        var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
-                        checkboxes.each(function () {
-                            this.checked = true;
-                        });
-                    } else {
-                        // La case à cocher est décochée, décochez toutes les cases à cocher du même type
-                        var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
-                        checkboxes.each(function () {
-                            this.checked = false;
-                        });
-                    }
-                }
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            {{Form::label('Corps', 'Corps', array('class'=>'form-label'))}}
+                            <textarea id="corps_modele" class='corps_modele' name="corps_modele"></textarea>
+                        </div>
+                    </div>
 
-                function checkAll(checkbox) {
-
-                    var dataTable = $('.dataTable').DataTable();
-
-                    var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser');
-                    checkboxes.each(function () {
-                        this.checked = checkbox.checked;
-                    });
-                }
-            </script>
+                    <script>
+                        function checkSpecificType(checkbox, userType) {
+                            var dataTable = $('.dataTable').DataTable();
             
+                            if (checkbox.checked) {
+                                // La case à cocher est cochée, sélectionnez toutes les cases à cocher du même type
+                                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
+                                checkboxes.each(function () {
+                                    this.checked = true;
+                                });
+                            } else {
+                                // La case à cocher est décochée, décochez toutes les cases à cocher du même type
+                                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
+                                checkboxes.each(function () {
+                                    this.checked = false;
+                                });
+                            }
+                        }
+
+                        function checkAll(checkbox) {
+
+                            var dataTable = $('.dataTable').DataTable();
+
+                            var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser');
+                            checkboxes.each(function () {
+                                this.checked = checkbox.checked;
+                            });
+                        }
+                    </script>
+                </div>
+            </div>   
         </div>
     </div>
 

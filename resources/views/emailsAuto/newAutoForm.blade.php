@@ -1,12 +1,4 @@
-{{ Form::open(['route' => 'prepareSend', 'method' => 'post']) }}
-<style>
-    .btn-black
-    {
-        background: #2c2c2c !important;
-        border: 1px #2c2c2c !important; 
-    }
-</style>
-
+{{ Form::open(['route' => 'showAutoForm', 'method' => 'post']) }}
 <div class="modal-body">
     <div class="row">
         <div class="col-md-12">
@@ -16,11 +8,7 @@
             </div>  
 
             <div class="form-group">
-                <button class="btn btn-primary" name='submitType' type='submit' value='single' style='width:100%;height:42px'>Envoi simple</button>
-            </div>
-
-            <div class="form-group">
-                <button class="btn btn-secondary" name='submitType' type='submit' value='group' style='width:100%;height:42px'>Envoi groupé</button>
+                <button class="btn btn-primary" name='submitType' type='submit' value='auto' style='width:100%;height:42px'>Créer un nouveau</button>
             </div>
         </div>
     </div>
