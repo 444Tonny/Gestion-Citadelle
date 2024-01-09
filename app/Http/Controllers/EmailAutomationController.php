@@ -85,7 +85,7 @@ class EmailAutomationController extends Controller
             $dayOfWeek = $request->input('day', '*');
     
             // Générez l'expression cron en fonction des données du formulaire
-            $cronExpression = $this->generateCronExpression($time, $dayOfMonth, $month, $dayOfWeek);
+            $cronExpression = $this->cronService->generateCronExpression($time, $dayOfMonth, $month, $dayOfWeek);
     
             // Créez une nouvelle instance de AutomationTrigger dans la base de données
             $automationTrigger = new AutomationTrigger();
@@ -104,34 +104,6 @@ class EmailAutomationController extends Controller
             return redirect()->route('emailsAuto.index')->with('error', 'An error occured');
         }
     }
-
-    private function generateCronExpression($time, $dayOfMonth, $month, $dayOfWeek)
-    {
-        // Déterminez la partie minute à partir de l'heure
-        list($hour, $minute) = explode(':', $time);
-        $minutePart = $minute;
-    
-        // Initialisez les parties de l'expression cron avec des valeurs par défaut
-        $minutePart = $minute ?? '0';
-        $hourPart = $hour ?? '*';
-        $dayOfMonthPart = $dayOfMonth ?? '*';
-    
-        // Convertissez les tableaux en chaînes pour l'expression cron
-        $monthPart = $this->convertArrayToCronPart($month);
-        $dayOfWeekPart = $this->convertArrayToCronPart($dayOfWeek);
-    
-        $cronExpression = "$minutePart $hourPart $dayOfMonthPart $monthPart $dayOfWeekPart";
-    
-        return $cronExpression;
-    }
-    
-    private function convertArrayToCronPart($array)
-    {
-        if (empty($array)) return '*';
-        elseif (!is_array($array)) return $array;
-        else return implode(',', $array);
-    }
-    
     
     public function destroy($id)
     {

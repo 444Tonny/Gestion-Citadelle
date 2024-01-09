@@ -51,7 +51,35 @@ class EmailAutomationService
         }
     
         return $part;
-    }    
+    }   
+    
+    
+    private function generateCronExpression($time, $dayOfMonth, $month, $dayOfWeek)
+    {
+        // Déterminez la partie minute à partir de l'heure
+        list($hour, $minute) = explode(':', $time);
+        $minutePart = $minute;
+    
+        // Initialisez les parties de l'expression cron avec des valeurs par défaut
+        $minutePart = $minute ?? '0';
+        $hourPart = $hour ?? '*';
+        $dayOfMonthPart = $dayOfMonth ?? '*';
+    
+        // Convertissez les tableaux en chaînes pour l'expression cron
+        $monthPart = $this->convertArrayToCronPart($month);
+        $dayOfWeekPart = $this->convertArrayToCronPart($dayOfWeek);
+    
+        $cronExpression = "$minutePart $hourPart $dayOfMonthPart $monthPart $dayOfWeekPart";
+    
+        return $cronExpression;
+    }
+    
+    private function convertArrayToCronPart($array)
+    {
+        if (empty($array)) return '*';
+        elseif (!is_array($array)) return $array;
+        else return implode(',', $array);
+    }
 }
 
 ?>
