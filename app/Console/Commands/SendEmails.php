@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Services\EmailService;
+use App\Models\EmailTemplate;
 use App\Models\User;
 
 class SendEmails extends Command
@@ -13,8 +14,8 @@ class SendEmails extends Command
      *
      * @var string
      */
-    protected $signature = 'emails:send {recipients?}';
-    protected $description = 'Send emails to recipients automatically.';
+    protected $signature = 'emails:send {recipients?} {template?} {parentid?}';
+    protected $description = 'Send emails to multiple recipients automatically with a given template.';
     protected $emailService;
 
     /**
@@ -32,12 +33,21 @@ class SendEmails extends Command
     public function handle()
     {
         $recipients = $this->argument('recipients');
-        //$recipients = [9, 10];
+        $recipientsArray = explode(',', $recipients);
+
+        $idTemplate = $this->argument('template');
+        $parent_id = $this->argument('parentid');
+
+        dump($recipients);
         
-        foreach ($recipients as $recipient) {
+        foreach ($recipientsArray as $recipient) {
 
             $user = User::find($recipient);
-            $this->emailService->sendEmail($user, 'Auto sujet', 'Corps auto');
+            $template = EmailTemplate::find($idTemplate);
+
+            $emailContent = $user->replacePlaceholders($template->corps, 'UTF-8', 'ISO-8859-1');
+
+            $this->emailService->sendEmail($user, $template->sujet, $emailContent, null, $parent_id);
         }
     }
 }

@@ -31,7 +31,7 @@
             <a href="{{route('dashboard')}}"><h1>{{__('Dashboard')}}</h1></a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{route('emails.index')}}">Emails</a>
+            <a href="{{route('emailsAuto.index')}}">Emails automatiques</a>
         </li>
         <li class="breadcrumb-item active">
             <a href="#">{{__('Create')}}</a>

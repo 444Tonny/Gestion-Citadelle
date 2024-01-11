@@ -35,9 +35,11 @@ class EmailService
         return $is_sent;
     }
 
-    public function sendEmail($destinataire, $sujet, $htmlContent, $message = null)
+    public function sendEmail($destinataire, $sujet, $htmlContent, $message = null, $parent_id = null) 
     {
-        $user = \Auth::user();
+        // parent_id pour les cmd automatisées
+        if($parent_id == null) $user = \Auth::user();
+        else $user = User::find($parent_id);
 
         $is_sent = false;
 

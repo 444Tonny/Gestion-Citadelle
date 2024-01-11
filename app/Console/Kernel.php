@@ -21,7 +21,7 @@ class Kernel extends ConsoleKernel
         $triggers = DB::table('automation_triggers')->get();
     
         foreach ($triggers as $trigger) {
-            $command = "emails:send {$trigger->recipients}";
+            $command = "emails:send {$trigger->recipients} {$trigger->id_modele}";
             $expression = $trigger->scheduling_expression;
         
             // Récupérez le jour du mois à partir de l'expression cron

@@ -52,11 +52,14 @@
                                     <form method="POST" action="{{ route('emailsAuto.destroy', ['emailsAuto' => $trigger->id_trigger]) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce déclencheur?');">
                                         @csrf
                                         @method('DELETE')
+
+                                        <!--
                                         <a class="text-warning customModal" href="#"
                                         
                                             data-bs-original-title="Details"> 
                                             <i data-feather="eye"></i>
                                         </a>
+                                        -->
 
                                         <button type='submit' style='background:none;border:none;'> 
                                             <i data-feather="trash-2" style='color:red;'></i></a>

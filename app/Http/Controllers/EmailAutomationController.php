@@ -76,6 +76,8 @@ class EmailAutomationController extends Controller
     public function store(Request $request)
     {
         try {
+            $user = \Auth::user();
+
             $validator = \Validator::make(
                 $request->all(), [
                     'selectedUsers' => 'required',
@@ -86,7 +88,7 @@ class EmailAutomationController extends Controller
             );
             if ($validator->fails()) {
                 $messages = $validator->getMessageBag();
-                return redirect()->route('emailsAuto.index')->with('error', 'Champs insuffisant: '. $messages);
+                return redirect()->route('emailsAuto.index')->with('error', 'Champs insuffisant.');
             }
     
             // Récupérer les données du formulaire
@@ -106,6 +108,7 @@ class EmailAutomationController extends Controller
             $automationTrigger->id_modele = $request->input('id_modele');
             $automationTrigger->is_active = 'Activé';
             $automationTrigger->recipients = implode(',', $request->input('selectedUsers')); //reverse $array = explode(', ', $string);
+            $automationTrigger->parent_id = $user->id;
             $automationTrigger->save();
     
             return redirect()->route('emailsAuto.index')->with('success', 'Email automatique créé avec succès!');
