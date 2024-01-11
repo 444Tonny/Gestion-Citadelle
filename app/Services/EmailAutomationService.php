@@ -54,7 +54,7 @@ class EmailAutomationService
     }   
     
     
-    private function generateCronExpression($time, $dayOfMonth, $month, $dayOfWeek)
+    public function generateCronExpression($time, $dayOfMonth, $month, $dayOfWeek)
     {
         // Déterminez la partie minute à partir de l'heure
         list($hour, $minute) = explode(':', $time);
@@ -76,9 +76,15 @@ class EmailAutomationService
     
     private function convertArrayToCronPart($array)
     {
-        if (empty($array)) return '*';
-        elseif (!is_array($array)) return $array;
-        else return implode(',', $array);
+        
+        if (!is_array($array)) {
+            return $array;
+        }
+        else if (empty($array) || in_array('*', $array)) {
+            return '*';
+        } else {
+            return implode(',', $array);
+        }
     }
 }
 

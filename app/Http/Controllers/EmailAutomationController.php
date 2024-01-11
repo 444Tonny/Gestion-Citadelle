@@ -8,6 +8,7 @@ use App\Models\TenantInvoice;
 use App\Models\User;
 use App\Models\AutomationTrigger;
 use App\Models\EmailTemplate;
+use App\Models\PropertyUsers;
 
 class EmailAutomationController extends Controller
 {    
@@ -52,9 +53,19 @@ class EmailAutomationController extends Controller
             $user = \Auth::user();
 
             $template = EmailTemplate::where('id_modele', '=', $request->input('template'))->get();
-            $users = User::where('parent_id', '=', $user->parentId())->get();
+
+            $users = User::leftJoin('property_tenant_user_view', 'users.id', '=', 'property_tenant_user_view.id_user')
+                        ->where('users.parent_id', '=', $user->parentId())
+                        ->select('users.*', 'property_tenant_user_view.name as property_name')
+                        ->get();
+
+            // Récuperer toutes les propriété de l'utilisateur
+            $properties = PropertyUsers::where('parent_id', $user->parentId())
+                            ->groupBy('name')
+                            ->pluck('name')
+                            ->toArray();
             
-            return view('emailsAuto.createAuto', compact('template', 'users'));
+            return view('emailsAuto.createAuto', compact('template', 'users', 'properties'));
 
         } catch (\Throwable $th) {
             
