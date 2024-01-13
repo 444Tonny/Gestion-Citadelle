@@ -16,6 +16,7 @@ class AutomationTrigger extends Model
         'frequence',
         'id_modele',
         'recipients',
-        'is_active'
+        'is_active',
+        'timezone'
     ];
 }

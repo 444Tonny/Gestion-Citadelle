@@ -129,3 +129,59 @@
     content: 'copied';
     opacity: 0.5;
 }
+
+/* Toggle switch */
+
+.toggle-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+}
+
+.switch-checkbox {
+    display: none;
+}
+
+.switch-label {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: grey;
+    border-radius: 15px;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.switch-checkbox:checked + .switch-label {
+    background: #73d779; /* Changez cette couleur selon vos besoins */
+}
+
+.switch-handle {
+    position: absolute;
+    left: 7px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.switch-checkbox:checked + .switch-label .switch-handle {
+    transform: translateX(135%);
+}
+
+/* Ajoutez une couleur de fond différente pour l'état activé */
+.switch-enabled .switch-label {
+    background: #73d779; /* Changez cette couleur selon vos besoins */
+}
+
+/* Ajoutez une couleur de fond différente pour le bouton dans l'état activé */
+.switch-enabled .switch-checkbox:checked + .switch-label .switch-handle {
+    background: #fff; /* Changez cette couleur selon vos besoins */
+}
+
+

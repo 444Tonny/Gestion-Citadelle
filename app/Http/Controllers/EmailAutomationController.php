@@ -64,7 +64,7 @@ class EmailAutomationController extends Controller
                             ->groupBy('name')
                             ->pluck('name')
                             ->toArray();
-            
+
             return view('emailsAuto.createAuto', compact('template', 'users', 'properties'));
 
         } catch (\Throwable $th) {
@@ -80,10 +80,12 @@ class EmailAutomationController extends Controller
 
             $validator = \Validator::make(
                 $request->all(), [
+                    'name_task' => 'required',
                     'selectedUsers' => 'required',
                     'interval' => 'required',
                     'time' => 'required',
                     'sujet' => 'required',
+                    'timezone' => 'required'
                 ]
             );
             if ($validator->fails()) {
@@ -103,12 +105,14 @@ class EmailAutomationController extends Controller
             // Créez une nouvelle instance de AutomationTrigger dans la base de données
             $automationTrigger = new AutomationTrigger();
             $automationTrigger->scheduling_expression = $cronExpression;
+            $automationTrigger->name_task = $request->input('name_task');
             $automationTrigger->type = $request->input('sujet');
             $automationTrigger->frequence = $request->input('interval');
             $automationTrigger->id_modele = $request->input('id_modele');
-            $automationTrigger->is_active = 'Activé';
+            $automationTrigger->is_active = 'enabled';
             $automationTrigger->recipients = implode(',', $request->input('selectedUsers')); //reverse $array = explode(', ', $string);
             $automationTrigger->parent_id = $user->id;
+            $automationTrigger->timezone = $request->input('timezone');
             $automationTrigger->save();
     
             return redirect()->route('emailsAuto.index')->with('success', 'Email automatique créé avec succès!');
@@ -125,5 +129,24 @@ class EmailAutomationController extends Controller
         $trigger->delete();
 
         return redirect()->back()->with('success', 'Trigger successfully deleted');
+    }
+
+    public function updateState(Request $request)
+    {
+        $newActiveState = $request->input('newActiveState');
+        $idCheckbox = $request->input('idCheckbox');
+
+        // Supposons que votre modèle Trigger a une colonne 'is_active'
+        // que vous souhaitez mettre à jour
+        $trigger = AutomationTrigger::find($idCheckbox); // Remplacez 1 par l'ID de votre trigger
+
+        if ($trigger) {
+            $trigger->is_active = $newActiveState;
+            $trigger->save();
+
+            return response()->json(['message' => 'État du trigger mis à jour avec succès']);
+        }
+
+        return response()->json(['message' => 'Erreur lors de la mise à jour de l\'état du trigger'], 500);
     }
 }

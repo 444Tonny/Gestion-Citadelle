@@ -270,6 +270,7 @@ Route::group(
 
         Route::get('emailsAuto/new', [EmailAutomationController::class,'chooseTemplate'])->name('newAutoForm');
         Route::post('emailsAuto/new', [EmailAutomationController::class,'showAutoForm'])->name('showAutoForm');
+        Route::post('emailsAuto/updateState', [EmailAutomationController::class, 'updateState'])->name('updateState');
 
         Route::resource('emailsAuto', EmailAutomationController::class);
     }

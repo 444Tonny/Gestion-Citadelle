@@ -44,7 +44,19 @@
 {{Form::open(array('url'=>'emailsAuto','method'=>'post', 'id'=>'templateForm'))}}
     <div class="modal-body">
         <div class="row">
-            
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <br>
+                            {{Form::label('name_task', 'Nom de la tâche', array('class'=>'form-label'))}}
+                            {{Form::text('name_task','', array('class'=>'form-control','placeholder'=> 'Nom...' ,'required'=>'required'))}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    
             <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -52,8 +64,8 @@
                         <div class="form-group col-md-6 col-lg-6">
                             <label for="interval" class="form-label">Fréquence</label>
                             <select id="intervalSelect" name="interval" class="form-control">
-                                <option value="7">Chaque semaine</option>
-                                <option value="30">Chaque mois</option>
+                                <option value="7">Par semaine</option>
+                                <option value="30">Par mois</option>
                             </select>
                         </div>
 
@@ -154,13 +166,24 @@
                                 }
                             });
                         </script>
-
-
                         
                         <div class="form-group col-md-6 col-lg-6">
                             <label for="time" class="form-label">Heure</label>
                             <input type="time" name="time" class="form-control" required>
                         </div>
+
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label for="timezone" class="form-label">Fuseau horaire</label>
+                            <select name="timezone" class="form-control" required>
+                                <option value="America/Montreal" selected>Eastern Time (ET) - Montréal</option>
+                                <option value="America/Toronto">Eastern Time (ET) - Toronto</option>
+                                <option value="America/New_York">Eastern Time (ET) - New York</option>
+                                <option value="America/Vancouver">Pacific Time (PT) </option>
+                                <option value="America/Chicago">Central Time (CT)</option>
+                                <option value="America/Denver">Mountain Time (MT)</option>
+                            </select>
+                        </div>
+
 
                         <!--                
                         <div class="form-group col-md-6 col-lg-6">
@@ -307,7 +330,6 @@
     <div class="modal-footer">
         <input type='hidden' name='corps_code' class='corps_code' value=''>
         <input type='hidden' name='id_modele' value='{{ $template[0]->id_modele }}'>
-        <a class="btn btn-secondary" href="{{route('emails.index')}}">Retour</a>
         <button type='button' id='submitTemplate' class='btn btn-primary ml-10' onclick=getCode()>Créer</button>
     </div>
 

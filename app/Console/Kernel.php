@@ -18,26 +18,32 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-        $triggers = DB::table('automation_triggers')->get();
+        $triggers = DB::table('automation_triggers')->where('is_active', 'enabled')->get();
     
         foreach ($triggers as $trigger) {
-            $command = "emails:send {$trigger->recipients} {$trigger->id_modele}";
+            $command = "emails:send {$trigger->recipients} {$trigger->id_modele} {$trigger->parent_id}";
             $expression = $trigger->scheduling_expression;
+            $timezone = $trigger->timezone;
         
             // Récupérez le jour du mois à partir de l'expression cron
             $dayOfMonth = explode(' ', $expression)[2];
         
             // Vérifiez si le jour du mois est valide pour le mois actuel
-            if ($dayOfMonth == '*' || ($dayOfMonth > 0 && $dayOfMonth <= date('t'))) {
+            if ($dayOfMonth == '*' || ($dayOfMonth > 0 && $dayOfMonth <= date('t'))) 
+            {
                 echo "Tâche planifiée: $command avec expression cron $expression" . PHP_EOL;
-                $schedule->command($command)->cron($expression);
-            } else {
+                $schedule->command($command)->timezone($timezone)->cron($expression);
+                //$schedule->command($command)->cron('*/3 * * * *');
+            } 
+            else 
+            {
                 // Remplacez le jour du mois par le dernier jour du mois
                 $lastDayOfMonth = date('t');
                 $expression = implode(' ', array_slice(explode(' ', $expression), 0, 2)) . " $lastDayOfMonth * *";
         
                 echo "Tâche planifiée (avec jour du mois ajusté): $command avec expression cron $expression" . PHP_EOL;
-                $schedule->command($command)->cron($expression);
+                $schedule->command($command)->timezone($timezone)->cron($expression);
+                //$schedule->command($command)->cron('*/3 * * * *');
             }
         }
         
