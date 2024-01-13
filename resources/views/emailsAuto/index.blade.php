@@ -31,6 +31,7 @@
                             <tr>
                                 <th>Tâche</th>
                                 <th>Occurence</th>
+                                <th>Timezone</th>
                                 <th>Statut </th>
                                 <th>Action </th>
                             </tr>
@@ -41,6 +42,7 @@
                             <tr role="row">
                                 <td> {{ $trigger->name_task }} </td>
                                 <td> {{ $trigger->readableExpression  }} </td>
+                                <td>{{ $trigger->timezone }}</td>
                                 <td style='display:flex;justify-content:center;'>
                                     <div class="toggle-switch" id="toggleSwitch1" data-active='{{ $trigger->is_active }}'>
                                         <input type="checkbox" class="switch-checkbox" data-id='{{ $trigger->id_trigger }}' name='switchTrigger{{ $trigger->id_trigger }}' id="switch1" />
@@ -54,13 +56,10 @@
                                         @csrf
                                         @method('DELETE')
 
-                                        <!--
-                                        <a class="text-warning customModal" href="#"
-                                        
+                                        <a class="text-warning customModal" href="#" data-title="Details Tâche" data-url="{{ route('showTaskDetails', $trigger->id_trigger) }}"
                                             data-bs-original-title="Details"> 
                                             <i data-feather="eye"></i>
                                         </a>
-                                        -->
 
                                         <button type='submit' style='background:none;border:none;'> 
                                             <i data-feather="trash-2" style='color:red;'></i></a>

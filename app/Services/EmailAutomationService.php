@@ -117,17 +117,50 @@ class EmailAutomationService
         }
     }
 
-    private function convertIDArrayToUsers($idArray)
+    public function convertIDStringToUsers($idString)
     {
-        $users = [];
+        // Convert the comma-separated string to an array of IDs
+        $idArray = explode(',', $idString);
+    
+        // Remove any empty values from the array
+        $idArray = array_filter($idArray);
+    
+        // Fetch users based on the array of IDs
+        $users = User::find($idArray);
+    
+        return $users;
+    }
 
-        $i = 0;
-        foreach ($idArray as $id) {
-            $users[$i] = User::find($id);
-            $i++;
+    public function deleteIDFromString($stringID, $idUser)
+    {
+        // Convert the comma-separated string to an array
+        $idArray = explode(',', $stringID);
+    
+        // Remove the specified ID from the array
+        $idArray = array_filter($idArray, function ($id) use ($idUser) {
+            return $id != $idUser;
+        });
+    
+        // Convert the array back to a comma-separated string
+        $newStringID = implode(',', $idArray);
+    
+        return $newStringID;
+    }
+
+    public function addIDToString($stringID, $addId)
+    {
+        // Convert the comma-separated string to an array
+        $idArray = explode(',', $stringID);
+
+        // Add the new ID to the array if it doesn't already exist
+        if (!in_array($addId, $idArray)) {
+            $idArray[] = $addId;
         }
 
-        return $users;
+        // Convert the array back to a comma-separated string
+        $newStringID = implode(',', $idArray);
+
+        return $newStringID;
     }
 }
 

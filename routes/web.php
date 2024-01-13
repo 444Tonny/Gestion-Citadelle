@@ -272,6 +272,10 @@ Route::group(
         Route::post('emailsAuto/new', [EmailAutomationController::class,'showAutoForm'])->name('showAutoForm');
         Route::post('emailsAuto/updateState', [EmailAutomationController::class, 'updateState'])->name('updateState');
 
+        Route::get('emailsAuto/show/{id}', [EmailAutomationController::class,'showTaskDetails'])->name('showTaskDetails');
+        Route::delete('emailsAuto/delete-recipient/{id}/{triggerId}', [EmailAutomationController::class,'deleteRecipient'])->name('delete.recipient');
+        Route::post('emailsAuto/add-recipient/{id}/{triggerId}', [EmailAutomationController::class,'addRecipient'])->name('add.recipient');
+
         Route::resource('emailsAuto', EmailAutomationController::class);
     }
 );

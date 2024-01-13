@@ -40,6 +40,23 @@ class EmailAutomationController extends Controller
         }
     }
 
+    // Afficher les destinataires et details d'une tâche
+    public function showTaskDetails($idTrigger)
+    {
+        $user = \Auth::user();
+        $trigger = AutomationTrigger::find($idTrigger);
+
+        $recipients = $this->cronService->convertIDStringToUsers($trigger->recipients);
+        
+
+        $otherUsers = User::where('parent_id', $user->parentId())
+            ->whereNotIn('id', $recipients->pluck('id')->toArray())
+            ->orderBy('email', 'asc')
+            ->get();
+
+        return view('emailsAuto.show', compact('trigger','recipients', 'otherUsers'));
+    }
+
     public function chooseTemplate()
     {
         $templates = EmailTemplate::all()->pluck('nom_modele', 'id_modele');
@@ -123,6 +140,49 @@ class EmailAutomationController extends Controller
         }
     }
     
+    public function deleteRecipient($id, $triggerId)
+    {
+        try
+        {
+            $trigger = AutomationTrigger::find($triggerId);
+
+            $trigger->recipients = $this->cronService->deleteIDFromString($trigger->recipients, $id);
+            $trigger->save();
+    
+            return response()->json(['success' => 'User deleted successfully.']);
+        }
+        catch(\Exception $th)
+        {
+            echo($th);
+            return response()->json(['error' => 'An error occured:' .$th]);
+        }
+    }
+
+    public function addRecipient($id, $triggerId)
+    {
+        try
+        {
+            $trigger = AutomationTrigger::find($triggerId);
+
+            $trigger->recipients = $this->cronService->addIDToString($trigger->recipients, $id);
+            $trigger->save();
+
+            $user = User::find($id);
+    
+            return response()->json([
+                'success' => true,
+                'email' => $user->email,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+            ]);
+        }
+        catch(\Exception $th)
+        {
+            echo($th);
+            return response()->json(['error' => 'An error occured:' .$th]);
+        }
+    }
+
     public function destroy($id)
     {
         $trigger = AutomationTrigger::find($id);
