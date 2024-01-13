@@ -6,6 +6,7 @@ use App\Models\TenantInvoice;
 use Illuminate\Http\Request;
 use App\Models\EmailTemplate;
 use App\Models\User;
+use App\Models\PropertyUsers;
 use App\Models\JournalEmail;
 use App\Services\EmailService;
 
@@ -68,10 +69,20 @@ class EmailSendingController extends Controller
             $user = \Auth::user();
 
             $template = EmailTemplate::where('id_modele', '=', $request->input('template'))->get();
-            $users = User::where('parent_id', '=', $user->parentId())->get();
+            //$users = User::where('parent_id', '=', $user->parentId())->orderBy('email', 'asc') ->get();
+
+            $users = User::leftJoin('property_tenant_user_view', 'users.id', '=', 'property_tenant_user_view.id_user')
+                    ->where('users.parent_id', '=', $user->parentId())
+                    ->select('users.*', 'property_tenant_user_view.name as property_name')
+                    ->get();
+
+            $properties = PropertyUsers::where('parent_id', $user->parentId())
+                    ->groupBy('name')
+                    ->pluck('name')
+                    ->toArray();
 
             if($request->input('submitType') == 'single') return view('emails.createSingle', compact('template', 'users'));
-            else if($request->input('submitType') == 'group') return view('emails.createGroup', compact('template', 'users'));
+            else if($request->input('submitType') == 'group') return view('emails.createGroup', compact('template', 'users', 'properties'));
             else return view('emails.createAuto', compact('template', 'users'));
 
         } catch (\Throwable $th) {

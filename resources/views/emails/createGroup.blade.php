@@ -36,34 +36,41 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        {{ Form::label('Destinataires', 'Destinataire',['class'=>'form-label']) }}
-                        <br>
-                        <input type="checkbox" id="checkbox1" onchange="checkSpecificType(this, 'tenant')">     
-                        {{ Form::label('', 'Tous les locataires',['class'=>'form-label thin']) }}
+                        {{ Form::label('Destinataires', 'Destinataires',['class'=>'form-label']) }}
                         <br>
                         <input type="checkbox" id="checkbox1" onchange="checkSpecificType(this, 'manager')">     
                         {{ Form::label('', 'Tous les managers',['class'=>'form-label thin']) }}
                         <br>
                         <input type="checkbox" id="checkbox1" value='tenant' onchange="checkSpecificType(this, 'maintainer')">     
                         {{ Form::label('', 'Tous les maintainers',['class'=>'form-label thin']) }}
+                        <br>
+                            @foreach($properties as $property)
+                                <input type="checkbox" id="checkbox1" onchange="checkSpecificProperty(this, '{{ $property }}')">     
+                                <label class=' thin'>Locataires de : <b>{{ $property }}</b></label>
+                            @endforeach
+                        <br>
+                        <br>
                     </div>  
                 </div>
-
 
                 <table class="display dataTable cell-border datatbl-advance">
                     <thead>
                         <tr>
                             <th><input type="checkbox" id="checkboxSelectAll" onchange="checkAll(this)"></th>
+                            <th>Utilisateur</th>
                             <th>Email</th>
                             <th>Type</th>
+                            <th>Propriété</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($users as $user)
                         <tr role='row'>
-                            <td><input type="checkbox" class="checkboxUser" name='selectedUsers[]' data-type='{{ $user->type }}' value='{{ $user->id }}'></td>
+                            <td><input type="checkbox" class="checkboxUser" name='selectedUsers[]' data-type='{{ $user->type }}' data-property='{{ $user->property_name }}' value='{{ $user->id }}'></td>
+                            <td>{{ $user->first_name }} {{ $user->last_name }}</td>
                             <td>{{ $user->email }}</td>
                             <td class='userType'>{{ $user->type }}</td>
+                            <td class='userProperty'>{{ $user->property_name }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -100,36 +107,6 @@
                             <textarea id="corps_modele" class='corps_modele' name="corps_modele"></textarea>
                         </div>
                     </div>
-
-                    <script>
-                        function checkSpecificType(checkbox, userType) {
-                            var dataTable = $('.dataTable').DataTable();
-            
-                            if (checkbox.checked) {
-                                // La case à cocher est cochée, sélectionnez toutes les cases à cocher du même type
-                                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
-                                checkboxes.each(function () {
-                                    this.checked = true;
-                                });
-                            } else {
-                                // La case à cocher est décochée, décochez toutes les cases à cocher du même type
-                                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
-                                checkboxes.each(function () {
-                                    this.checked = false;
-                                });
-                            }
-                        }
-
-                        function checkAll(checkbox) {
-
-                            var dataTable = $('.dataTable').DataTable();
-
-                            var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser');
-                            checkboxes.each(function () {
-                                this.checked = checkbox.checked;
-                            });
-                        }
-                    </script>
                 </div>
             </div>   
         </div>
@@ -149,6 +126,34 @@
 
             $('.note-editable').html(contenuHTML);
         });
+    
+        function checkSpecificType(checkbox, userType) {
+            var dataTable = $('.dataTable').DataTable();
+
+            if (checkbox.checked) {
+                // La case à cocher est cochée, sélectionnez toutes les cases à cocher du même type
+                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
+                checkboxes.each(function () {
+                    this.checked = true;
+                });
+            } else {
+                // La case à cocher est décochée, décochez toutes les cases à cocher du même type
+                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
+                checkboxes.each(function () {
+                    this.checked = false;
+                });
+            }
+        }
+
+        function checkAll(checkbox) {
+
+            var dataTable = $('.dataTable').DataTable();
+
+            var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser');
+            checkboxes.each(function () {
+                this.checked = checkbox.checked;
+            });
+        }
     </script>
 
     {{Form::close()}}

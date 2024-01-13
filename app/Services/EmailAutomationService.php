@@ -25,34 +25,64 @@ class EmailAutomationService
         $month = $this->convertPartToPhrase($parts[3], 'mois');
     
         // Construction de la phrase
-        $phrase = "À $hour:$minute, le $dayOfMonth $month";
+        $phrase = "À $hour:$minute - $dayOfMonth $month";
     
         return $phrase;
     }
-    
     private function convertPartToPhrase($part, $unit)
     {
-        if ($part === '*') {
+        if ($part === '*') 
+        {
             return "chaque $unit";
-        } elseif (strpos($part, ',') !== false) {
+        } 
+        elseif (strpos($part, ',') !== false) 
+        {
             // Gestion des listes (ex. "1,15,30")
             $values = explode(',', $part);
-            return implode(', ', array_map(function ($value) use ($unit) {
-                return "$value $unit";
-            }, $values));
-        } elseif (strpos($part, '-') !== false) {
+
+            // Check if $unit is "mois" (month)
+            if ($unit === 'mois') {
+                // Convert month numbers to month names
+                $monthNames = [
+                    '1' => 'Janvier',
+                    '2' => 'Février',
+                    '3' => 'Mars',
+                    '4' => 'Avril',
+                    '5' => 'Mai',
+                    '6' => 'Juin',
+                    '7' => 'Juillet',
+                    '8' => 'Août',
+                    '9' => 'Septembre',
+                    '10' => 'Octobre',
+                    '11' => 'Novembre',
+                    '12' => 'Décembre',
+                ];
+
+                return implode(', ', array_map(function ($value) use ($monthNames) {
+                    return $monthNames[$value];
+                }, $values));
+            } else {
+                return implode(', ', array_map(function ($value) use ($unit) {
+                    return "$value $unit";
+                }, $values));
+            }
+        } 
+        elseif (strpos($part, '-') !== false) 
+        {
             // Gestion des plages (ex. "1-5")
             list($start, $end) = explode('-', $part);
             return "de $start à $end $unit";
-        } elseif (strpos($part, '/') !== false) {
+        } 
+        elseif (strpos($part, '/') !== false) 
+        {
             // Gestion des intervalles (ex. "*/15")
             list($start, $interval) = explode('/', $part);
             return "chaque $interval $unit à partir de $start";
         }
-    
+
         return $part;
-    }   
-    
+    }
+        
     
     public function generateCronExpression($time, $dayOfMonth, $month, $dayOfWeek)
     {
@@ -85,6 +115,19 @@ class EmailAutomationService
         } else {
             return implode(',', $array);
         }
+    }
+
+    private function convertIDArrayToUsers($idArray)
+    {
+        $users = [];
+
+        $i = 0;
+        foreach ($idArray as $id) {
+            $users[$i] = User::find($id);
+            $i++;
+        }
+
+        return $users;
     }
 }
 

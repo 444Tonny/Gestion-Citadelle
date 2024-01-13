@@ -225,6 +225,7 @@
                         <thead>
                             <tr>
                                 <th><input type="checkbox" id="checkboxSelectAll" onchange="checkAll(this)"></th>
+                                <th>Utilisateur</th>
                                 <th>Email</th>
                                 <th>Type</th>
                                 <th>Propriété</th>
@@ -234,6 +235,7 @@
                             @foreach($users as $user)
                             <tr role='row'>
                                 <td><input type="checkbox" class="checkboxUser" name='selectedUsers[]' data-type='{{ $user->type }}' data-property='{{ $user->property_name }}' value='{{ $user->id }}'></td>
+                                <td>{{ $user->first_name }} {{ $user->last_name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td class='userType'>{{ $user->type }}</td>
                                 <td class='userProperty'>{{ $user->property_name }}</td>
@@ -246,83 +248,16 @@
 
             <div class="card">
                 <div class="card-body">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <br>
-                            {{Form::label('Sujet', 'Sujet', array('class'=>'form-label'))}}
-                            {{Form::text('sujet',$template[0]->sujet, array('class'=>'form-control','placeholder'=> 'Sujet...' ,'required'=>'required'))}}
-                        </div>
+                    <div class="form-group">
+                        {{Form::label('Sujet', 'Sujet', array('class'=>'form-label'))}}
+                        <br>
+                        {{Form::text('sujet',$template[0]->sujet, array('class'=>'form-control','placeholder'=> 'Sujet...' ,'required'=>'required', 'readonly'=>'readonly'))}}
                     </div>
 
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            {{Form::label('Variables', 'variable', array('class'=>'form-label'))}}
-                            <div class='champs_personnalisables'>
-                                <span class='variable' onclick="copyContent(this, '{First_Name}')">{First_Name}</span>
-                                <span class='variable' onclick="copyContent(this, '{Last_Name}')">{Last_Name}</span>
-                                <span class='variable' onclick="copyContent(this, '{Payment_Total}')">{Payment_Total}</span>
-                                <span class='variable' onclick="copyContent(this, '{Payment_Due}')">{Payment_Due}</span>
-                                <span class='variable' onclick="copyContent(this, '{Invoice_Month}')">{Invoice_Month}</span>
-                            </div>
-                        </div>
-                    </div>            
-
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            {{Form::label('Corps', 'Corps', array('class'=>'form-label'))}}
-                            <textarea id="corps_modele" class='corps_modele' name="corps_modele"></textarea>
-                        </div>
+                    <div class="previewEmail">
+                        {!! $template[0]->corps !!}
                     </div>
                 </div>
-
-                <script>
-                    function checkSpecificType(checkbox, userType) {
-                        var dataTable = $('.dataTable').DataTable();
-        
-                        if (checkbox.checked) {
-                            // La case à cocher est cochée, sélectionnez toutes les cases à cocher du même type
-                            var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
-                            checkboxes.each(function () {
-                                this.checked = true;
-                            });
-                        } else {
-                            // La case à cocher est décochée, décochez toutes les cases à cocher du même type
-                            var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
-                            checkboxes.each(function () {
-                                this.checked = false;
-                            });
-                        }
-                    }
-
-                    function checkSpecificProperty(checkbox, property) {
-                        var dataTable = $('.dataTable').DataTable();
-
-                        if (checkbox.checked) {
-                            // La case à cocher est cochée, sélectionnez toutes les cases à cocher de la même propriété
-                            var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-property="' + property + '"]');
-                            checkboxes.each(function () {
-                                this.checked = true;
-                            });
-                        } else {
-                            // La case à cocher est décochée, décochez toutes les cases à cocher de la même propriété
-                            var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-property="' + property + '"]');
-                            checkboxes.each(function () {
-                                this.checked = false;
-                            });
-                        }
-                    }
-
-                    function checkAll(checkbox) {
-
-                        var dataTable = $('.dataTable').DataTable();
-
-                        var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser');
-                        checkboxes.each(function () {
-                            this.checked = checkbox.checked;
-                        });
-                    }
-
-                </script>
             </div>
         </div>
     </div>
@@ -330,17 +265,56 @@
     <div class="modal-footer">
         <input type='hidden' name='corps_code' class='corps_code' value=''>
         <input type='hidden' name='id_modele' value='{{ $template[0]->id_modele }}'>
-        <button type='button' id='submitTemplate' class='btn btn-primary ml-10' onclick=getCode()>Créer</button>
+        <button type='submit' id='submitTemplate' class='btn btn-primary ml-10'>Créer</button>
     </div>
 
     
     <script src="{{ asset('js/summernote.js') }}"></script>
     <script>
-        $(document).ready(function() {
-            var contenuHTML = `<?php echo $template[0]->corps; ?>`;
+        function checkSpecificType(checkbox, userType) {
+            var dataTable = $('.dataTable').DataTable();
 
-            $('.note-editable').html(contenuHTML);
-        });
+            if (checkbox.checked) {
+                // La case à cocher est cochée, sélectionnez toutes les cases à cocher du même type
+                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
+                checkboxes.each(function () {
+                    this.checked = true;
+                });
+            } else {
+                // La case à cocher est décochée, décochez toutes les cases à cocher du même type
+                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
+                checkboxes.each(function () {
+                    this.checked = false;
+                });
+            }
+        }
+
+        function checkSpecificProperty(checkbox, property) {
+            var dataTable = $('.dataTable').DataTable();
+
+            if (checkbox.checked) {
+                // La case à cocher est cochée, sélectionnez toutes les cases à cocher de la même propriété
+                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-property="' + property + '"]');
+                checkboxes.each(function () {
+                    this.checked = true;
+                });
+            } else {
+                // La case à cocher est décochée, décochez toutes les cases à cocher de la même propriété
+                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-property="' + property + '"]');
+                checkboxes.each(function () {
+                    this.checked = false;
+                });
+            }
+        }
+
+        function checkAll(checkbox) 
+        {
+            var dataTable = $('.dataTable').DataTable();
+            var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser');
+            checkboxes.each(function () {
+                this.checked = checkbox.checked;
+            });
+        }
     </script>
 
     {{Form::close()}}

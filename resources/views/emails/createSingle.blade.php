@@ -33,7 +33,7 @@
                     <br>
                     <select class='form-control hidesearch' name='destinataire' required>
                         @foreach($users as $user)
-                        <option value='{{ $user->id }}'>{{ $user->email }}</option>
+                        <option value='{{ $user->id }}'>{{ $user->email }} ({{ $user->first_name }} {{ $user->last_name }})</option>
                         @endforeach
                     </select>
                 </div>  
