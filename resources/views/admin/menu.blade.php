@@ -200,7 +200,7 @@
                     <li class="cdxmenu-title">
                         <h5>Emails</h5>
                     </li>
-                    @if(Gate::check('manage invoice'))
+                    @if(Gate::check('manage templates'))
                         <li class="menu-item {{(Request::route()->getName() == 'template.index' || Request::route()->getName() == 'template.create' || Request::route()->getName() == 'template.edit' || Request::route()->getName() == 'template.show')?'active':''}}">
                             <a href="{{route('template.index')}}">
                                 <div class="icon-item"><i data-feather="file-text"></i></div>
@@ -209,7 +209,7 @@
                         </li>
                     @endif
 
-                    @if(Gate::check('manage invoice'))
+                    @if(Gate::check('manage emails'))
                         <li class="menu-item {{(Request::route()->getName() == 'emails.index' || Request::route()->getName() == 'emails.create' || Request::route()->getName() == 'emails.edit' || Request::route()->getName() == 'emails.show')?'active':''}}">
                             <a href="{{route('emails.index')}}">
                                 <div class="icon-item"><i data-feather="send"></i></div>
@@ -218,7 +218,7 @@
                         </li>
                     @endif
 
-                    @if(Gate::check('manage invoice'))
+                    @if(Gate::check('manage emails'))
                         <li class="menu-item {{(Request::route()->getName() == 'emailsAuto.index' || Request::route()->getName() == 'emailsAuto.create' || Request::route()->getName() == 'emailsAuto.edit' || Request::route()->getName() == 'emailsAuto.show')?'active':''}}">
                             <a href="{{route('emailsAuto.index')}}">
                                 <div class="icon-item"><i data-feather="settings"></i></div>

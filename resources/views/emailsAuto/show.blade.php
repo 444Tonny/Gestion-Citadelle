@@ -74,7 +74,8 @@
         })
         .then(response => response.json())  // Assuming the server returns JSON
         .then(data => {
-            if (data.success) {
+            if (data.success) 
+            {
                 // Create a new form element for the added recipient
                 const recipientsContainer = document.getElementById('recipients');
                 const newForm = document.createElement('form');

@@ -32,7 +32,6 @@ class RoleController extends Controller
         if(\Auth::user()->type == 'super admin')
         {
             $permissions = Permission::all()->pluck('name', 'id')->toArray();
-
         }
         else
         {

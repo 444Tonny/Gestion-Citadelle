@@ -193,6 +193,8 @@ class Custom extends Model
             'password settings',
             'general settings',
             'company settings',
+            'emails',
+            'templates'
            ];
     }
 
