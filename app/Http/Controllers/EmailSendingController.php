@@ -23,7 +23,7 @@ class EmailSendingController extends Controller
     {
         try 
         {
-            if (\Auth::user()->can('manage invoice')) 
+            if (\Auth::user()->can('manage emails')) 
             {
                 $user = \Auth::user();
 
@@ -57,7 +57,7 @@ class EmailSendingController extends Controller
 
     public function chooseType()
     {
-        $templates = EmailTemplate::all()->pluck('nom_modele', 'id_modele');
+        $templates = EmailTemplate::where('parent_id', '=', \Auth::user()->parentId())->pluck('nom_modele', 'id_modele');
 
         return view('emails.typeForm', compact('templates'));
     }
@@ -87,6 +87,7 @@ class EmailSendingController extends Controller
 
         } catch (\Throwable $th) {
             
+            dd($th);
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
@@ -95,8 +96,6 @@ class EmailSendingController extends Controller
     // Voir un aperçu de l'email avant de confirmer l'insertion et envoi
     public function store(Request $request)
     {   
-        //dd($request);
-
         $destinataire = TenantInvoice::find($request->input('destinataire'));
 
         if($destinataire == null) $destinataire = User::find($request->input('destinataire'));
@@ -105,11 +104,11 @@ class EmailSendingController extends Controller
         $destinataireId = $destinataire->id;
 
         $contenuMail = $request->input('corps_code');
-        $sujet = $request->input('sujet');
+        $sujet = $this->emailService->replaceSubjectVariables($request->input('sujet'));
 
         // Remplacer les variables entre accolades
         $texteHtmlRemplace = $destinataire->replacePlaceholders(mb_convert_encoding(base64_decode($contenuMail), 'UTF-8', 'ISO-8859-1'));
-            
+
         // Encoder une fois que les variables sont remplacées
         $contenuMail = base64_encode(mb_convert_encoding($texteHtmlRemplace, 'ISO-8859-1', 'UTF-8'));
 
@@ -122,7 +121,7 @@ class EmailSendingController extends Controller
     {
         try {
             $destinataire = User::find($request->input('destinataire'));
-            $sujet = $request->input('sujet');
+            $sujet = $this->emailService->replaceSubjectVariables($request->input('sujet'));
             $htmlContent = mb_convert_encoding(base64_decode($request->input('contenuMail')), 'UTF-8', 'ISO-8859-1');
 
             $is_sent = $this->emailService->sendEmail($destinataire, $sujet, $htmlContent);
@@ -140,9 +139,9 @@ class EmailSendingController extends Controller
         try {
             $selectedUsers = $request->input('selectedUsers');
 
-            $sujet = $request->input('sujet');
+            $sujet = $this->emailService->replaceSubjectVariables($request->input('sujet'));
             $htmlContent = mb_convert_encoding(base64_decode($request->input('corps_code')), 'UTF-8', 'ISO-8859-1');
-            
+    
             $is_sent = $this->emailService->sendMassEmail($selectedUsers, $sujet, $htmlContent);
 
             // Vérifiez si au moins un e-mail n'a pas été envoyé

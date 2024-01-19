@@ -23,7 +23,11 @@ class TenantInvoice extends Model
         'last_name',
         'email',
         'invoice_id',
+        'invoice_month',
+        'invoice_type',
+        'due_date',
         'payment_total',
+        'tenant_invoice',
         'amount',
         'status'
     ];
@@ -36,30 +40,49 @@ class TenantInvoice extends Model
         {
             $attributeName = strtolower(trim($matches[1])); // Convertir en minuscules et supprimer les espaces autour
 
+            $currentMonth = Carbon::now()->format('m');
+            $currentYear = Carbon::now()->format('Y');
+            $query = TenantInvoice::whereRaw("MONTH(invoice_month) = ? and YEAR(invoice_month) = ? and `id` = ? and `invoice_type` = ?", [$currentMonth, $currentYear, $this->id, 'Loyer']);
+
+            $tenantInvoice = $query->first();
+
             // Vérifier si l'attribut existe dans le modèle User
-            if ($this->getAttribute($attributeName)) {
-
-                if($attributeName == 'invoice_month') return Carbon::createFromFormat('Y-m-d', $this->getAttribute($attributeName))->format('F Y');
-
-                return $this->getAttribute($attributeName) ?: '#NULL#';
+            if ($this->getAttribute($attributeName)) 
+            {
+                if($attributeName == 'payment_total ') 
+                {
+                    return $tenantInvoice->getAttribute($attributeName) ?: '#NULL#';
+                }
+                else if($attributeName == 'due_date') 
+                {
+                    $attributeValue = $this->getAttribute($attributeName);
+    
+                    if ($attributeValue !== null) {
+                        return date('d M Y', strtotime($attributeValue));
+                    }
+                    else return null; 
+                }
+                else
+                {
+                    return in_array($attributeName, ['first_name', 'last_name'])
+                        ? ($this->getAttribute($attributeName) !== null ? $this->getAttribute($attributeName) : '')
+                        : ($this->getAttribute($attributeName) !== null ? $this->getAttribute($attributeName) : '#NULL#');
+                }
             }
 
+            // Payment_due n'existe pas dans la vue
             else if($attributeName == 'payment_due') 
-            {
-                $invoice = Invoice::find($this->invoice_id);
+            {                           
+                $invoice = Invoice::find($tenantInvoice->invoice_id);
 
                 return $invoice->getDue() ?: '#NULL#';
             }
+            else if($attributeName == 'current_month') return Carbon::now()->formatLocalized('%B');
+            else if($attributeName == 'current_year') return Carbon::now()->format('Y');
+            else if($attributeName == 'last_name') return ($this->getAttribute($attributeName) !== null) ? $this->getAttribute($attributeName) : '';
+            else if($attributeName == 'first_name') return ($this->getAttribute($attributeName) !== null) ? $this->getAttribute($attributeName) : '';
 
-            // Si l'attribut n'existe pas, vous pouvez également récupérer des valeurs à partir de relations ou d'autres sources.
-            // Par exemple, si vous avez une relation 'profile' sur le modèle User, vous pouvez accéder aux attributs de la relation :
-            // if ($this->profile && $this->profile->getAttribute($attributeName)) {
-            //     return $this->profile->getAttribute($attributeName);
-            // }
-
-            // Si l'attribut n'existe pas, retournez une chaîne vide ou la balise non modifiée
-
-            return '';
+            return '#NULL#';
 
         }, $htmlText);
     }

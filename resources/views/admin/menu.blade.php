@@ -196,7 +196,7 @@
 
                 <!-- Email -->
 
-                @if(Gate::check('manage property') || Gate::check('manage tenant') || Gate::check('manage invoice') || Gate::check('manage expense') || Gate::check('manage maintainer') || Gate::check('manage maintenance request'))
+                @if(Gate::check('manage templates') || Gate::check('manage emails'))
                     <li class="cdxmenu-title">
                         <h5>Emails</h5>
                     </li>

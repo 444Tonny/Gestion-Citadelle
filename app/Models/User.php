@@ -190,25 +190,31 @@ class User extends Authenticatable
 
     public function replacePlaceholders($htmlText)
     {
-        $userId = $this->id; // Supposons que l'id de l'utilisateur soit stocké dans la colonne 'id'.
+        $userId = $this->id; 
 
-        return preg_replace_callback('/\{([^\}]+)\}/', function ($matches) use ($userId) {
+        return preg_replace_callback('/\{([^\}]+)\}/', function ($matches) use ($userId) 
+        {
+            $currentMonth = Carbon::now()->formatLocalized('%B');
+            $currentYear = Carbon::now()->format('Y');
             $attributeName = strtolower(trim($matches[1])); // Convertir en minuscules et supprimer les espaces autour
 
-            // Vérifier si l'attribut existe dans le modèle User
-            if ($this->getAttribute($attributeName)) {
+            if ($this->getAttribute($attributeName)) 
+            {
+                $value = $this->getAttribute($attributeName);
 
-                return $this->getAttribute($attributeName) ?: '#NULL#';
+                if (in_array($attributeName, ['first_name', 'last_name'])) {
+                    return ($value !== null) ? $value : 'Empty';
+                } else {
+                    return ($value !== null) ? $value : '#ERROR#';
+                }
             }
+            else if($attributeName == 'current_month') return Carbon::now()->formatLocalized('%B');
+            else if($attributeName == 'current_year') return $currentYear;
+            else if($attributeName == 'last_name') return ($this->getAttribute($attributeName) !== null) ? $this->getAttribute($attributeName) : '';
+            else if($attributeName == 'first_name') return ($this->getAttribute($attributeName) !== null) ? $this->getAttribute($attributeName) : '';
 
-            // Si l'attribut n'existe pas, vous pouvez également récupérer des valeurs à partir de relations ou d'autres sources.
-            // Par exemple, si vous avez une relation 'profile' sur le modèle User, vous pouvez accéder aux attributs de la relation :
-            // if ($this->profile && $this->profile->getAttribute($attributeName)) {
-            //     return $this->profile->getAttribute($attributeName);
-            // }
-
-            // Si l'attribut n'existe pas, retournez une chaîne vide ou la balise non modifiée
             return '#NULL#';
+
         }, $htmlText);
     }
 }

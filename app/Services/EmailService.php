@@ -13,6 +13,31 @@ use Illuminate\Support\Facades\Mail;
 
 class EmailService
 {
+    public function replaceSubjectVariables($message)
+    {    
+        $currentMonth = date('n'); // Numéro du mois actuel
+
+        $months = [
+            'fr' => [
+                'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+            ],
+            'en' => [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ],
+            // Ajoutez d'autres langues au besoin
+        ];
+    
+        // Remplacer [Mois] par le mois actuel en français
+        $message = str_replace('[Mois]', $months['fr'][$currentMonth - 1], $message);
+    
+        // Remplacer [Month] par le mois actuel en anglais
+        $message = str_replace('[Month]', $months['en'][$currentMonth - 1], $message);
+    
+        return $message;
+    }
+
     public function sendMassEmail($destinataires, $sujet, $htmlContent)
     {
         $is_sent = [];
@@ -42,6 +67,7 @@ class EmailService
         else $user = User::find($parent_id);
 
         $is_sent = false;
+        $sujet = $this->replaceSubjectVariables($sujet);
 
         try {
             $newEmail = new JournalEmail();

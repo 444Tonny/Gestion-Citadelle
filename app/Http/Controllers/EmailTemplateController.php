@@ -10,9 +10,12 @@ class EmailTemplateController extends Controller
     public function index()
     {
         try {
-            if (\Auth::user()->can('manage invoice')) 
+
+            $user = \Auth::user();
+
+            if (\Auth::user()->can('manage templates')) 
             {
-                $emailTemplates = EmailTemplate::all();
+                $emailTemplates = EmailTemplate::where('parent_id', '=', $user->parentId())->get();
 
                 if(\Auth::user()->type=='tenant'){
                 }
@@ -36,14 +39,13 @@ class EmailTemplateController extends Controller
             return view('template.create');
         } catch (\Throwable $th) {
             dd($th);
-
         }
     }
 
     public function store(Request $request)
     {
         try {
-            // if (\Auth::user()->can('manage invoice')) {
+            if (\Auth::user()->can('manage templates')) {
                 $validator = \Validator::make(
                     $request->all(), [
                         'nom_modele' => 'required',
@@ -62,23 +64,24 @@ class EmailTemplateController extends Controller
                 $template->categorie_modele = $request->sujet;
                 $template->sujet = $request->sujet;
                 $template->corps = mb_convert_encoding(base64_decode($request->corps_code), 'UTF-8', 'ISO-8859-1');
+                $template->parent_id = \Auth::user()->parentId();
                 $template->save();
 
                 return redirect()->route('template.index')->with('success', __('Email Template successfully created.'));
-            //} else 
-            //{    
-            //    return redirect()->back()->with('error', __('Permission Denied!'));
-            //}
+            } else 
+            {    
+                return redirect()->back()->with('error', __('Permission Denied!'));
+            }
         } 
         catch (\Throwable $th) {
-            dd($th);
+            //dd($th);
             return redirect()->back()->with('error', __($th->getMessage()));
         }
     }
 
     public function edit(EmailTemplate $template)
     {
-        if (\Auth::user()->can('edit invoice')) {
+        if (\Auth::user()->can('manage templates')) {
             
             return view('template.edit', compact('template'));
         } else {
@@ -88,7 +91,7 @@ class EmailTemplateController extends Controller
 
     public function update(Request $request, EmailTemplate $template)
     {
-        if (\Auth::user()->can('edit invoice')) {
+        if (\Auth::user()->can('manage templates')) {
             $validator = \Validator::make(
                 $request->all(), [
                     'nom_modele' => 'required',
@@ -119,7 +122,7 @@ class EmailTemplateController extends Controller
     public function destroy($id)
     {
 
-        if(\Auth::user()->can('delete invoice'))
+        if(\Auth::user()->can('manage emails'))
         {
             $role = EmailTemplate::find($id);
             $role->delete();

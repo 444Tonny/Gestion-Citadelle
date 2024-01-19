@@ -94,9 +94,12 @@
                             <div class='champs_personnalisables'>
                                 <span class='variable' onclick="copyContent(this, '{First_Name}')">{First_Name}</span>
                                 <span class='variable' onclick="copyContent(this, '{Last_Name}')">{Last_Name}</span>
+                                <span class='variable' onclick="copyContent(this, '{Tenant_Address}')">{Tenant_address}</span>
                                 <span class='variable' onclick="copyContent(this, '{Payment_Total}')">{Payment_Total}</span>
                                 <span class='variable' onclick="copyContent(this, '{Payment_Due}')">{Payment_Due}</span>
-                                <span class='variable' onclick="copyContent(this, '{Invoice_Month}')">{Invoice_Month}</span>
+                                <span class='variable' onclick="copyContent(this, '{Due_Date}')">{Due_Date}</span>
+                                <span class='variable' onclick="copyContent(this, '{Current_Month}')">{Current_Month}</span>
+                                <span class='variable' onclick="copyContent(this, '{Current_Year}')">{Current_Year}</span>
                             </div>
                         </div>
                     </div>            
@@ -105,6 +108,7 @@
                         <div class="form-group">
                             {{Form::label('Corps', 'Corps', array('class'=>'form-label'))}}
                             <textarea id="corps_modele" class='corps_modele' name="corps_modele"></textarea>
+                            <input type='hidden' name='corps_code' class='corps_code' value=''>
                         </div>
                     </div>
                 </div>
@@ -113,7 +117,6 @@
     </div>
 
     <div class="modal-footer">
-        <input type='hidden' name='corps_code' class='corps_code' value=''>
         <a class="btn btn-secondary" href="{{route('emails.index')}}">Retour</a>
         <button type='button' id='submitTemplate' class='btn btn-primary ml-10' onclick=getCode()>Envoyer</button>
     </div>
@@ -126,34 +129,6 @@
 
             $('.note-editable').html(contenuHTML);
         });
-    
-        function checkSpecificType(checkbox, userType) {
-            var dataTable = $('.dataTable').DataTable();
-
-            if (checkbox.checked) {
-                // La case à cocher est cochée, sélectionnez toutes les cases à cocher du même type
-                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
-                checkboxes.each(function () {
-                    this.checked = true;
-                });
-            } else {
-                // La case à cocher est décochée, décochez toutes les cases à cocher du même type
-                var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
-                checkboxes.each(function () {
-                    this.checked = false;
-                });
-            }
-        }
-
-        function checkAll(checkbox) {
-
-            var dataTable = $('.dataTable').DataTable();
-
-            var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser');
-            checkboxes.each(function () {
-                this.checked = checkbox.checked;
-            });
-        }
     </script>
 
     {{Form::close()}}

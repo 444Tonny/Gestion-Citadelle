@@ -1,3 +1,4 @@
+
 $('#corps_modele').summernote({
     placeholder: '',
     tabsize: 2,
@@ -22,8 +23,6 @@ function getCode()
     var textareaElement = document.querySelector('.note-codable');
     var codeHtml = textareaElement.value;
     codeHtml = codeHtml.replace(/’/g, "'");
-
-    //console.log(codeHtml);
 
     var codeHidden = document.querySelector('.corps_code');
     codeHidden.value = btoa(codeHtml);
@@ -71,3 +70,48 @@ function copyContent(element, content) {
         }
     });
 };
+
+function checkSpecificType(checkbox, userType) {
+    var dataTable = $('.dataTable').DataTable();
+
+    if (checkbox.checked) {
+        // La case à cocher est cochée, sélectionnez toutes les cases à cocher du même type
+        var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
+        checkboxes.each(function () {
+            this.checked = true;
+        });
+    } else {
+        // La case à cocher est décochée, décochez toutes les cases à cocher du même type
+        var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-type="' + userType + '"]');
+        checkboxes.each(function () {
+            this.checked = false;
+        });
+    }
+}
+
+function checkSpecificProperty(checkbox, property) {
+    var dataTable = $('.dataTable').DataTable();
+
+    if (checkbox.checked) {
+        // La case à cocher est cochée, sélectionnez toutes les cases à cocher de la même propriété
+        var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-property="' + property + '"]');
+        checkboxes.each(function () {
+            this.checked = true;
+        });
+    } else {
+        // La case à cocher est décochée, décochez toutes les cases à cocher de la même propriété
+        var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser[data-property="' + property + '"]');
+        checkboxes.each(function () {
+            this.checked = false;
+        });
+    }
+}
+
+function checkAll(checkbox) 
+{
+    var dataTable = $('.dataTable').DataTable();
+    var checkboxes = dataTable.rows().nodes().to$().find('.checkboxUser');
+    checkboxes.each(function () {
+        this.checked = checkbox.checked;
+    });
+}

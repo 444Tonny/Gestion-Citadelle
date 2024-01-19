@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\EmailAutomationService;
+use App\Services\EmailService;
 use App\Models\TenantInvoice;
 use App\Models\User;
 use App\Models\AutomationTrigger;
@@ -12,24 +13,29 @@ use App\Models\PropertyUsers;
 
 class EmailAutomationController extends Controller
 {    
-    protected $cronService;
+    protected $cronService;    
+    private $emailService;
 
-    public function __construct(EmailAutomationService $cronService)
+    public function __construct(EmailAutomationService $cronService, EmailService $emailService)
     {
         $this->cronService = $cronService;
+        $this->emailService = $emailService;
     }
 
     public function index()
     {
         try 
         {
-            $triggers = AutomationTrigger::all();
+            $parentId = \Auth::user()->parentId();
+            $triggers = AutomationTrigger::where('parent_id', '=', $parentId)->get();
 
-            // Transformez les expressions cron en phrases lisible
-            $triggers->transform(function ($trigger) {
-                $trigger->readableExpression = $this->cronService->cronExpressionToReadable($trigger->scheduling_expression);
-                return $trigger;
-            });
+            if ($triggers->count() > 0) {
+                // Transformez les expressions cron en phrases lisible
+                $triggers->transform(function ($trigger) {
+                    $trigger->readableExpression = $this->cronService->cronExpressionToReadable($trigger->scheduling_expression);
+                    return $trigger;
+                });
+            }
 
             return view('emailsAuto.index', compact('triggers'));
         } 
@@ -59,7 +65,7 @@ class EmailAutomationController extends Controller
 
     public function chooseTemplate()
     {
-        $templates = EmailTemplate::all()->pluck('nom_modele', 'id_modele');
+        $templates = EmailTemplate::where('parent_id', '=', \Auth::user()->parentId())->pluck('nom_modele', 'id_modele');
 
         return view('emailsAuto.newAutoForm', compact('templates'));
     }
@@ -123,12 +129,12 @@ class EmailAutomationController extends Controller
             $automationTrigger = new AutomationTrigger();
             $automationTrigger->scheduling_expression = $cronExpression;
             $automationTrigger->name_task = $request->input('name_task');
-            $automationTrigger->type = $request->input('sujet');
+            $automationTrigger->type = $this->emailService->replaceSubjectVariables($request->input('sujet'));
             $automationTrigger->frequence = $request->input('interval');
             $automationTrigger->id_modele = $request->input('id_modele');
             $automationTrigger->is_active = 'enabled';
             $automationTrigger->recipients = implode(',', $request->input('selectedUsers')); //reverse $array = explode(', ', $string);
-            $automationTrigger->parent_id = $user->id;
+            $automationTrigger->parent_id = \Auth::user()->parentId();
             $automationTrigger->timezone = $request->input('timezone');
             $automationTrigger->save();
     

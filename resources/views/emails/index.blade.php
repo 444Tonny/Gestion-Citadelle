@@ -42,7 +42,7 @@
                         <tbody>
                             @foreach($journauxEmail as $email)
                             <tr role="row">
-                                <td> {{ \Carbon\Carbon::parse($email->date_envoi)->format('j M Y') }} </td>
+                                <td>{{ \Carbon\Carbon::parse($email->date_envoi)->format('d M Y') }}</td>
                                 <td> {{ $email->sujet_journal }} </td>
                                 <td> {{ $email->email_destinataire }} </td>
                                 <td>

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\TenantInvoice;
 use Illuminate\Console\Command;
 use App\Services\EmailService;
 use App\Models\EmailTemplate;
@@ -42,7 +43,7 @@ class SendEmails extends Command
         
         foreach ($recipientsArray as $recipient) {
 
-            $user = User::find($recipient);
+            $user = TenantInvoice::find($recipient);
             $template = EmailTemplate::find($idTemplate);
 
             $emailContent = $user->replacePlaceholders($template->corps, 'UTF-8', 'ISO-8859-1');
