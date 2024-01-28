@@ -10,7 +10,7 @@ use App\Models\Tenant;
 use App\Models\Type;
 use Illuminate\Http\Request;
 
-class InvoiceController extends Controller
+class RentController extends Controller
 {
 
     public function index()
@@ -23,7 +23,7 @@ class InvoiceController extends Controller
                 $invoices = Invoice::where('parent_id', \Auth::user()->parentId())->get();
             }
 
-            return view('invoice.index', compact('invoices'));
+            return view('rent.index', compact('invoices'));
         } else {
             return redirect()->back()->with('error', __('Permission Denied!'));
         }
@@ -38,11 +38,12 @@ class InvoiceController extends Controller
             $property->prepend(__('Select Property'), '');
             
             //$types = Type::where('parent_id', \Auth::user()->parentId())->where('type', 'invoice')->get()->pluck('title', 'id');
-            $types = Type::all()->except(1)->pluck('title', 'id');
+            $type = Type::find(1);
+            $types = $type ? collect([$type])->pluck('title', 'id') : [];
             $types->prepend(__('Select Type'), '');
 
             $invoiceNumber = $this->invoiceNumber();
-            return view('invoice.create', compact('types', 'property', 'invoiceNumber'));
+            return view('rent.create', compact('types', 'property', 'invoiceNumber'));
         } else {
             return redirect()->back()->with('error', __('Permission Denied!'));
         }
@@ -86,7 +87,7 @@ class InvoiceController extends Controller
                 $invoiceItem->description = $types[$i]['description'];
                 $invoiceItem->save();
             }
-            return redirect()->route('invoice.index')->with('success', __('Invoice successfully created.'));
+            return redirect()->route('rent.index')->with('success', __('Invoice successfully created.'));
         } else {
             return redirect()->back()->with('error', __('Permission Denied!'));
         }
@@ -98,7 +99,7 @@ class InvoiceController extends Controller
         if (\Auth::user()->can('show invoice')) {
             $invoiceNumber = $invoice->invoice_id;
             $tenant = Tenant::where('property', $invoice->property_id)->where('unit', $invoice->unit_id)->first();
-            return view('invoice.show', compact('invoiceNumber', 'invoice', 'tenant'));
+            return view('rent.show', compact('invoiceNumber', 'invoice', 'tenant'));
         } else {
             return redirect()->back()->with('error', __('Permission Denied!'));
         }
@@ -112,11 +113,12 @@ class InvoiceController extends Controller
             $property->prepend(__('Select Property'), '');
 
             //$types = Type::where('parent_id', \Auth::user()->parentId())->where('type', 'invoice')->get()->pluck('title', 'id');
-            $types = Type::all()->except(1)->pluck('title', 'id');
+            $type = Type::find(1);
+            $types = $type ? collect([$type])->pluck('title', 'id') : [];
             $types->prepend(__('Select Type'), '');
 
             $invoiceNumber = $invoice->invoice_id;
-            return view('invoice.edit', compact('types', 'property', 'invoiceNumber', 'invoice'));
+            return view('rent.edit', compact('types', 'property', 'invoiceNumber', 'invoice'));
         } else {
             return redirect()->back()->with('error', __('Permission Denied!'));
         }
@@ -160,7 +162,7 @@ class InvoiceController extends Controller
                 $invoiceItem->description = $types[$i]['description'];
                 $invoiceItem->save();
             }
-            return redirect()->route('invoice.index')->with('success', __('Invoice successfully updated.'));
+            return redirect()->route('rent.index')->with('success', __('Invoice successfully updated.'));
         } else {
             return redirect()->back()->with('error', __('Permission Denied!'));
         }
@@ -173,7 +175,7 @@ class InvoiceController extends Controller
             InvoiceItem::where('invoice_id', $invoice->id)->delete();
             InvoicePayment::where('invoice_id', $invoice->id)->delete();
             $invoice->delete();
-            return redirect()->route('invoice.index')->with('success', __('Invoice successfully deleted.'));
+            return redirect()->route('rent.index')->with('success', __('Invoice successfully deleted.'));
         } else {
             return redirect()->back()->with('error', __('Permission Denied!'));
         }
@@ -208,7 +210,7 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::find($invoice_id);
 
-        return view('invoice.payment', compact('invoice_id','invoice'));
+        return view('rent.payment', compact('invoice_id','invoice'));
     }
 
     public function invoicePaymentStore(Request $request, $invoice_id)

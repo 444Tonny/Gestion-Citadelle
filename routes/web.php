@@ -14,12 +14,14 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\RentController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\MaintainerController;
 use App\Http\Controllers\MaintenanceRequestController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\EmailSendingController;
 use App\Http\Controllers\EmailAutomationController;
+use App\Http\Controllers\RentAutomationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -212,12 +214,29 @@ Route::group(
             'XSS',
         ],
     ], function (){
-    Route::get('invoice/{id}/payment/create', [InvoiceController::class,'invoicePaymentCreate'])->name('invoice.payment.create');
-    Route::post('invoice/{id}/payment/store', [InvoiceController::class,'invoicePaymentStore'])->name('invoice.payment.store');
-    Route::delete('invoice/{id}/payment/{pid}/destroy', [InvoiceController::class,'invoicePaymentDestroy'])->name('invoice.payment.destroy');
-    Route::delete('invoice/type/destroy', [InvoiceController::class,'invoiceTypeDestroy'])->name('invoice.type.destroy');
-    Route::resource('invoice', InvoiceController::class);
-}
+        Route::get('invoice/{id}/payment/create', [InvoiceController::class,'invoicePaymentCreate'])->name('invoice.payment.create');
+        Route::post('invoice/{id}/payment/store', [InvoiceController::class,'invoicePaymentStore'])->name('invoice.payment.store');
+        Route::delete('invoice/{id}/payment/{pid}/destroy', [InvoiceController::class,'invoicePaymentDestroy'])->name('invoice.payment.destroy');
+        Route::delete('invoice/type/destroy', [InvoiceController::class,'invoiceTypeDestroy'])->name('invoice.type.destroy');
+        Route::resource('invoice', InvoiceController::class);
+    }
+);
+
+//-------------------------------Rent-------------------------------------------
+
+Route::group(
+    [
+        'middleware' => [
+            'auth',
+            'XSS',
+        ],
+    ], function (){
+        Route::get('rent/{id}/payment/create', [RentController::class,'invoicePaymentCreate'])->name('rent.payment.create');
+        Route::post('rent/{id}/payment/store', [RentController::class,'invoicePaymentStore'])->name('rent.payment.store');
+        Route::delete('rent/{id}/payment/{pid}/destroy', [RentController::class,'invoicePaymentDestroy'])->name('rent.payment.destroy');
+        Route::delete('rent/type/destroy', [RentController::class,'invoiceTypeDestroy'])->name('rent.type.destroy');
+        Route::resource('rent', RentController::class);
+    }
 );
 
 
@@ -268,7 +287,7 @@ Route::group(
             ],
         ], function (){
 
-        Route::get('emailsAuto/new', [EmailAutomationController::class,'chooseTemplate'])->name('newAutoForm');
+        Route::get('emailsAuto/new', [EmailAutomationController::class,'chooseTemplate'])->name('chooseTemplate');
         Route::post('emailsAuto/new', [EmailAutomationController::class,'showAutoForm'])->name('showAutoForm');
         Route::post('emailsAuto/updateState', [EmailAutomationController::class, 'updateState'])->name('updateState');
 
@@ -278,6 +297,30 @@ Route::group(
 
         Route::resource('emailsAuto', EmailAutomationController::class);
     }
+);
+
+
+//------------------------------- Loyers Automatiques -------------------------------------------
+
+Route::group(
+    [
+        'middleware' => [
+            'auth',
+            'XSS',
+        ],
+    ], function (){
+
+    Route::get('rentAuto/new', [RentAutomationController::class,'chooseTemplate'])->name('rentAuto.chooseTemplate');
+    Route::post('rentAuto/new', [RentAutomationController::class,'showAutoForm'])->name('rentAuto.showAutoForm');
+
+    Route::post('rentAuto/updateState', [RentAutomationController::class, 'updateState'])->name('rentAuto.updateState');
+
+    Route::get('rentAuto/show/{id}', [RentAutomationController::class,'showTaskDetails'])->name('rentAuto.showTaskDetails');
+    Route::delete('rentAuto/delete-recipient/{id}/{triggerId}', [RentAutomationController::class,'deleteRecipient'])->name('rentAuto.delete.recipient');
+    Route::post('rentAuto/add-recipient/{id}/{triggerId}', [RentAutomationController::class,'addRecipient'])->name('rentAuto.add.recipient');
+
+    Route::resource('rentAuto', RentAutomationController::class);
+}
 );
 
 //-------------------------------Expense-------------------------------------------

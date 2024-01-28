@@ -168,6 +168,14 @@
                             </a>
                         </li>
                     @endif
+                    @if(Gate::check('manage invoice'))
+                        <li class="menu-item {{(Request::route()->getName() == 'rent.index' || Request::route()->getName() == 'rent.create' || Request::route()->getName() == 'rent.edit' || Request::route()->getName() == 'rent.show')?'active':''}}">
+                            <a href="{{route('rent.index')}}">
+                                <div class="icon-item"><i data-feather="file-text"></i></div>
+                                <span>{{__('Rent')}}</span>
+                            </a>
+                        </li>
+                    @endif
                     @if(Gate::check('manage expense'))
                         <li class="menu-item {{(Request::route()->getName() == 'expense.index')?'active':''}}">
                             <a href="{{route('expense.index')}}">
@@ -223,6 +231,15 @@
                             <a href="{{route('emailsAuto.index')}}">
                                 <div class="icon-item"><i data-feather="settings"></i></div>
                                 <span>Automatisation</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if(Gate::check('manage emails'))
+                        <li class="menu-item {{(Request::route()->getName() == 'rentAuto.index' || Request::route()->getName() == 'rentAuto.create' || Request::route()->getName() == 'rentAuto.edit' || Request::route()->getName() == 'rentAuto.show')?'active':''}}">
+                            <a href="{{route('rentAuto.index')}}">
+                                <div class="icon-item"><i data-feather="settings"></i></div>
+                                <span>{{__('Rent')}}</span>
                             </a>
                         </li>
                     @endif

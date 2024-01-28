@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('page-title')
-    Emails
+    Loyers automatiques
 @endsection
 @section('breadcrumb')
     <ul class="breadcrumb mb-0">
@@ -8,13 +8,13 @@
             <a href="{{route('dashboard')}}"><h1>{{__('Dashboard')}}</h1></a>
         </li>
         <li class="breadcrumb-item active">
-            <a href="#">Emails automatiques</a>
+            <a href="#">Loyers automatiques</a>
         </li>
     </ul>
 @endsection
 @section('card-action-btn')
         <a class="btn btn-primary btn-sm ml-20 customModal" href="#" data-size="md"
-           data-url="{{ route('chooseTemplate') }}"
+           data-url="{{ route('rentAuto.chooseTemplate') }}"
            data-title="Nouvel envoi"> <i
                 class="ti-plus mr-5"></i>
                 Nouveau
@@ -52,7 +52,7 @@
                                     </div>
                                 </td>    
                                 <td style='text-align:center;'>
-                                    <form method="POST" action="{{ route('emailsAuto.destroy', ['emailsAuto' => $trigger->id_trigger]) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce déclencheur?');">
+                                    <form method="POST" action="{{ route('rentAuto.destroy', ['rentAuto' => $trigger->id_trigger]) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce déclencheur?');">
                                         @csrf
                                         @method('DELETE')
 
