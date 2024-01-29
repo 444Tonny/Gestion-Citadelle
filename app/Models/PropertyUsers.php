@@ -14,10 +14,12 @@ class PropertyUsers extends Model
 
     protected $fillable = [
         'id_property',
+        'id_unit',
         'name',
         'address',
         'parent_id',
         'id_tenant',
+        'rent',
         'lease_start_date',
         'lease_end_date',
         'id_user',

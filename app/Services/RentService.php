@@ -6,17 +6,19 @@ namespace App\Services;
 use App\Models\JournalEmail;
 use App\Mail\CitadelleEmail;
 use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\TenantInvoice;
 use App\Models\PropertyUnit;
 use App\Models\PropertyUsers;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 class RentService
 {
-    public function generateRent($propertyId)
+    public function generateRent($propertyId, $parentId)
     { 
         $currentDate = Carbon::now()->toDateString();
 
@@ -26,34 +28,40 @@ class RentService
             ->where('lease_end_date', '>=', $currentDate)
             ->get();
 
-        dd($propertyTenants);
+        DB::beginTransaction();
 
-        foreach ($propertyTenants as $propertyTenant) {
+        try {
+            foreach ($propertyTenants as $propertyTenant) 
+            {
+                $lastInvoiceId = Invoice::max('invoice_id');
+                $newInvoiceId = $lastInvoiceId + 1;
 
-            $lastInvoiceId = Invoice::max('invoice_id');
-            $newInvoiceId = $lastInvoiceId + 1;
+                $today = Carbon::now();
+                $nextMonth = $today->addMonthNoOverflow()->firstOfMonth()->toDateString();
+
+                $invoice = new Invoice();
+                $invoice->invoice_id = $newInvoiceId;
+                $invoice->property_id = $propertyId;
+                $invoice->unit_id = $propertyTenant->id_unit;
+                $invoice->invoice_month = $nextMonth;
+                $invoice->end_date = $nextMonth;
+                $invoice->notes = "";
+                $invoice->status = 'ouvert';
+                $invoice->parent_id = $parentId;
+                $invoice->save();
+                
+                $invoiceItem = new InvoiceItem();
+                $invoiceItem->invoice_id = $invoice->id;
+                $invoiceItem->invoice_type = 1; //'Loyer';
+                $invoiceItem->amount = $propertyTenant->rent;
+                $invoiceItem->description = '';
+                $invoiceItem->save();
+            }
+
+            DB::commit();
         }
-
-
-        $invoice = new Invoice();
-        $invoice->invoice_id = $newInvoiceId;
-        $invoice->property_id = $propertyId;
-        $invoice->unit_id = $request->unit_id;
-        $invoice->invoice_month = $request->invoice_month;
-        $invoice->end_date = $request->end_date;
-        $invoice->notes = $request->notes;
-        $invoice->status = 'ouvert';
-        $invoice->parent_id = \Auth::user()->parentId();
-        $invoice->save();
-        $types = $request->types;
-
-        for ($i = 0; $i < count($types); $i++) {
-            $invoiceItem = new InvoiceItem();
-            $invoiceItem->invoice_id = $invoice->id;
-            $invoiceItem->invoice_type = $types[$i]['invoice_type'];
-            $invoiceItem->amount = $types[$i]['amount'];
-            $invoiceItem->description = $types[$i]['description'];
-            $invoiceItem->save();
+        catch (\Exception $e) {
+            DB::rollBack();
         }
     }
 
