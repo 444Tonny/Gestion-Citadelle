@@ -16,11 +16,17 @@ class RentController extends Controller
     public function index()
     {
         if (\Auth::user()->can('manage invoice')) {
-            if(\Auth::user()->type=='tenant'){
+            if(\Auth::user()->type=='tenant')
+            {
                 $tenant=Tenant::where('user_id',\Auth::user()->id)->first();
                 $invoices = Invoice::where('property_id',$tenant->property)->where('unit_id',$tenant->unit)->where('parent_id', \Auth::user()->parentId())->get();
-            }else{
-                $invoices = Invoice::where('parent_id', \Auth::user()->parentId())->get();
+            }
+            else
+            {
+                $invoices = Invoice::where('parent_id', \Auth::user()->parentId())
+                ->whereIn('id', function ($query) {
+                    $query->select('id')->from('v_rents');
+                })->get();
             }
 
             return view('rent.index', compact('invoices'));
@@ -105,7 +111,6 @@ class RentController extends Controller
         }
     }
 
-
     public function edit(Invoice $invoice)
     {
         if (\Auth::user()->can('edit invoice')) {
@@ -124,9 +129,8 @@ class RentController extends Controller
         }
     }
 
-
     public function update(Request $request, Invoice $invoice)
-    {
+    {   
         if (\Auth::user()->can('edit invoice')) {
             $validator = \Validator::make(
                 $request->all(), [

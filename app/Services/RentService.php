@@ -8,6 +8,7 @@ use App\Mail\CitadelleEmail;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\TenantInvoice;
+use App\Models\RentTemplate;
 use App\Models\PropertyUnit;
 use App\Models\PropertyUsers;
 use App\Models\User;
@@ -23,16 +24,19 @@ class RentService
         $currentDate = Carbon::now()->toDateString();
 
         // Récupérer les utilisateurs/tenants actives de chaque propriété
-        $propertyTenants = PropertyUsers::where('id_property', 1)
+        $propertyTenants = PropertyUsers::where('id_property', $propertyId)
             ->where('lease_start_date', '<=', $currentDate)
             ->where('lease_end_date', '>=', $currentDate)
             ->get();
 
-        DB::beginTransaction();
+        dump($propertyTenants);
+
+        //dd($propertyTenants);
 
         try {
             foreach ($propertyTenants as $propertyTenant) 
             {
+                DB::beginTransaction();
                 $lastInvoiceId = Invoice::max('invoice_id');
                 $newInvoiceId = $lastInvoiceId + 1;
 
@@ -56,18 +60,31 @@ class RentService
                 $invoiceItem->amount = $propertyTenant->rent;
                 $invoiceItem->description = '';
                 $invoiceItem->save();
+                    
+                DB::commit();
+
+                $template = RentTemplate::find(1);
+                $destinataire = TenantInvoice::where('invoice_id', $invoice->id)->first();
+                
+                $this->sendEmail($destinataire, 
+                                $this->replaceSubjectVariables($template->sujet), 
+                                $destinataire->replacePlaceholders($template->corps, $destinataire), 
+                                null, 
+                                $propertyTenant->parent_id
+                            ); 
             }
 
-            DB::commit();
         }
         catch (\Exception $e) {
             DB::rollBack();
+            dd($e);
         }
     }
 
     public function replaceSubjectVariables($message)
     {    
         $currentMonth = date('n'); // Numéro du mois actuel
+        $currentYear = date('Y');
 
         $months = [
             'fr' => [
@@ -83,9 +100,14 @@ class RentService
     
         // Remplacer [Mois] par le mois actuel en français
         $message = str_replace('[Mois]', $months['fr'][$currentMonth - 1], $message);
+        $message = str_replace('[mois]', $months['fr'][$currentMonth - 1], $message);
     
         // Remplacer [Month] par le mois actuel en anglais
         $message = str_replace('[Month]', $months['en'][$currentMonth - 1], $message);
+        $message = str_replace('[month]', $months['en'][$currentMonth - 1], $message);
+
+        $message = str_replace('[Year]', $currentYear, $message);
+        $message = str_replace('[year]', $currentYear, $message);
     
         return $message;
     }
@@ -150,6 +172,7 @@ class RentService
             return $is_sent;
             
         } catch (\Exception $e) {
+            dd($e);
             $this->handleException($destinataire, $sujet, $htmlContent, $e->getMessage());
         }
     }

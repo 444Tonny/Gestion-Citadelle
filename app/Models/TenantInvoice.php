@@ -29,22 +29,28 @@ class TenantInvoice extends Model
         'payment_total',
         'tenant_invoice',
         'amount',
-        'status'
+        'status',
+        'tenant_address',
+        'unit'
     ];
 
-    public function replacePlaceholders($htmlText)
+    public function replacePlaceholders($htmlText, $invoice = null)
     {
         $userId = $this->id;
 
-        return preg_replace_callback('/\{([^\}]+)\}/', function ($matches) use ($userId) 
+        return preg_replace_callback('/\{([^\}]+)\}/', function ($matches) use ($userId, $invoice) 
         {
             $attributeName = strtolower(trim($matches[1])); // Convertir en minuscules et supprimer les espaces autour
 
             $currentMonth = Carbon::now()->format('m');
             $currentYear = Carbon::now()->format('Y');
-            $query = TenantInvoice::whereRaw("MONTH(invoice_month) = ? and YEAR(invoice_month) = ? and `id` = ? and `invoice_type` = ?", [$currentMonth, $currentYear, $this->id, 'Loyer']);
-
-            $tenantInvoice = $query->first();
+            
+            if($invoice == null)
+            {
+                $query = TenantInvoice::whereRaw("MONTH(invoice_month) = ? and YEAR(invoice_month) = ? and `id` = ? and `invoice_type` = ?", [$currentMonth, $currentYear, $this->id, 'Loyer']);
+                $tenantInvoice = $query->first();
+            } 
+            else $tenantInvoice = $invoice;
 
             // Vérifier si l'attribut existe dans le modèle User
             if ($this->getAttribute($attributeName)) 
@@ -78,6 +84,7 @@ class TenantInvoice extends Model
                 return $invoice->getDue() ?: '#NULL#';
             }
             else if($attributeName == 'current_month') return Carbon::now()->formatLocalized('%B');
+            else if($attributeName == 'next_month') return Carbon::now()->addMonth()->formatLocalized('%B');
             else if($attributeName == 'current_year') return Carbon::now()->format('Y');
             else if($attributeName == 'last_name') return ($this->getAttribute($attributeName) !== null) ? $this->getAttribute($attributeName) : '';
             else if($attributeName == 'first_name') return ($this->getAttribute($attributeName) !== null) ? $this->getAttribute($attributeName) : '';

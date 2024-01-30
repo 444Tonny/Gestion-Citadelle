@@ -20,7 +20,11 @@ class InvoiceController extends Controller
                 $tenant=Tenant::where('user_id',\Auth::user()->id)->first();
                 $invoices = Invoice::where('property_id',$tenant->property)->where('unit_id',$tenant->unit)->where('parent_id', \Auth::user()->parentId())->get();
             }else{
-                $invoices = Invoice::where('parent_id', \Auth::user()->parentId())->get();
+                // Ne pas afficher les loyers
+                $invoices = Invoice::where('parent_id', \Auth::user()->parentId())
+                    ->whereNotIn('id', function ($query) {
+                        $query->select('id')->from('v_rents');
+                    })->get();
             }
 
             return view('invoice.index', compact('invoices'));

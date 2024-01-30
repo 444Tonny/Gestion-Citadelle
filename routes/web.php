@@ -235,7 +235,7 @@ Route::group(
         Route::post('rent/{id}/payment/store', [RentController::class,'invoicePaymentStore'])->name('rent.payment.store');
         Route::delete('rent/{id}/payment/{pid}/destroy', [RentController::class,'invoicePaymentDestroy'])->name('rent.payment.destroy');
         Route::delete('rent/type/destroy', [RentController::class,'invoiceTypeDestroy'])->name('rent.type.destroy');
-        Route::resource('rent', RentController::class);
+        Route::resource('rent', RentController::class, ['parameters' => ['rent' => 'invoice']]);
     }
 );
 

@@ -196,7 +196,9 @@ class User extends Authenticatable
         {
             $currentMonth = Carbon::now()->formatLocalized('%B');
             $currentYear = Carbon::now()->format('Y');
-            $attributeName = strtolower(trim($matches[1])); // Convertir en minuscules et supprimer les espaces autour
+            
+            // Convertir en minuscules et supprimer les espaces autour
+            $attributeName = strtolower(trim($matches[1])); 
 
             if ($this->getAttribute($attributeName)) 
             {
@@ -209,6 +211,7 @@ class User extends Authenticatable
                 }
             }
             else if($attributeName == 'current_month') return Carbon::now()->formatLocalized('%B');
+            else if($attributeName == 'next_month') return Carbon::now()->addMonth()->formatLocalized('%B');
             else if($attributeName == 'current_year') return $currentYear;
             else if($attributeName == 'last_name') return ($this->getAttribute($attributeName) !== null) ? $this->getAttribute($attributeName) : '';
             else if($attributeName == 'first_name') return ($this->getAttribute($attributeName) !== null) ? $this->getAttribute($attributeName) : '';

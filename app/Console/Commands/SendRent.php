@@ -46,6 +46,8 @@ class SendRent extends Command
         
         foreach ($recipientsArray as $propertyID) {
 
+            dump($propertyID);
+
             // Parcourir les id de propriété 
             $this->rentService->generateRent($propertyID, $parent_id);
 
