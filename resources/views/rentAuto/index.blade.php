@@ -56,10 +56,12 @@
                                         @csrf
                                         @method('DELETE')
 
-                                        <a class="text-warning customModal" href="#" data-title="Details Tâche" data-url="{{ route('showTaskDetails', $trigger->id_trigger) }}"
+                                        <!--
+                                        <a class="text-warning customModal" href="#" data-title="Details Tâche" data-url="{{ route('rentAuto.showTaskDetails', $trigger->id_trigger) }}"
                                             data-bs-original-title="Details"> 
                                             <i data-feather="eye"></i>
                                         </a>
+                                        -->
 
                                         <button type='submit' style='background:none;border:none;'> 
                                             <i data-feather="trash-2" style='color:red;'></i></a>
@@ -117,7 +119,7 @@
                                 var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
                                 // Requête AJAX pour mettre à jour l'état du trigger
                                 
-                                fetch("{{ route('updateState') }}", {
+                                fetch("{{ route('rentAuto.updateState') }}", {
                                     method: "POST",
                                     headers: {
                                         "Content-Type": "application/json",

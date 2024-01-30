@@ -50,7 +50,7 @@ class Kernel extends ConsoleKernel
         $rentTriggers = DB::table('rent_triggers')->where('is_active', 'enabled')->get();
     
         foreach ($rentTriggers as $rentTrigger) {
-            $command = "emails:send {$rentTrigger->recipients} {$rentTrigger->id_modele} {$rentTrigger->parent_id}";
+            $command = "rent:send {$rentTrigger->recipients} {$rentTrigger->id_modele} {$rentTrigger->parent_id}";
             $expression = $rentTrigger->scheduling_expression;
             $timezone = $rentTrigger->timezone;
         

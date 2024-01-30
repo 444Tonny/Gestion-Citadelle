@@ -39,7 +39,8 @@ class SendRent extends Command
         $recipients = $this->argument('recipients');
         $recipientsArray = explode(',', $recipients);
 
-        $idTemplate = $this->argument('template');
+        //$idTemplate = $this->argument('template');
+        $idTemplate = 20;
         $parent_id = $this->argument('parentid');
 
         dump($recipients);

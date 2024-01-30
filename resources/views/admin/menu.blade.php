@@ -221,7 +221,7 @@
                         <li class="menu-item {{(Request::route()->getName() == 'emails.index' || Request::route()->getName() == 'emails.create' || Request::route()->getName() == 'emails.edit' || Request::route()->getName() == 'emails.show')?'active':''}}">
                             <a href="{{route('emails.index')}}">
                                 <div class="icon-item"><i data-feather="send"></i></div>
-                                <span>Envois</span>
+                                <span>Journal</span>
                             </a>
                         </li>
                     @endif

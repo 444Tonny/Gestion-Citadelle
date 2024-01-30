@@ -209,6 +209,7 @@
                             @foreach($properties as $id_property => $name)
                                 <input type="checkbox" id="checkbox1" name='recipients[]' value="{{ $id_property }}">     
                                 <label class=' thin'>Locataires de : <b>{{ $name }}</b></label>
+                                <br>
                             @endforeach
                             <br>
                             <br>

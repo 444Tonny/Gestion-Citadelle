@@ -215,6 +215,7 @@
                             @foreach($properties as $property)
                                 <input type="checkbox" id="checkbox1" onchange="checkSpecificProperty(this, '{{ $property }}')">     
                                 <label class=' thin'>Locataires de : <b>{{ $property }}</b></label>
+                                <br>
                             @endforeach
                             <br>
                             <br>
