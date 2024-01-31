@@ -42,7 +42,7 @@
                             <tr role="row">
                                 <td> {{ $trigger->name_task }} </td>
                                 <td> {{ $trigger->readableExpression  }} </td>
-                                <td>{{ $trigger->timezone }}</td>
+                                <td> {{ $trigger->timezone }} </td>
                                 <td style='display:flex;justify-content:center;align-items:center;height:50px;'>
                                     <div class="toggle-switch" id="toggleSwitch1" data-active='{{ $trigger->is_active }}'>
                                         <input type="checkbox" class="switch-checkbox" data-id='{{ $trigger->id_trigger }}' name='switchTrigger{{ $trigger->id_trigger }}' id="switch1" />

@@ -31,7 +31,11 @@ class TenantInvoice extends Model
         'amount',
         'status',
         'tenant_address',
-        'unit'
+        'unit',
+        'city',
+        'state',
+        'country',
+        'zip_code'
     ];
 
     public function replacePlaceholders($htmlText, $invoice = null)
@@ -49,6 +53,7 @@ class TenantInvoice extends Model
             {
                 $query = TenantInvoice::whereRaw("MONTH(invoice_month) = ? and YEAR(invoice_month) = ? and `id` = ? and `invoice_type` = ?", [$currentMonth, $currentYear, $this->id, 'Loyer']);
                 $tenantInvoice = $query->first();
+                //dd($tenantInvoice);
             } 
             else $tenantInvoice = $invoice;
 
@@ -82,6 +87,15 @@ class TenantInvoice extends Model
                 $invoice = Invoice::find($tenantInvoice->invoice_id);
 
                 return $invoice->getDue() ?: '#NULL#';
+            }
+            else if($attributeName == 'received_amount') 
+            {                        
+                $invoice = Invoice::find($tenantInvoice->invoice_id);
+
+                $remaining = $invoice->getDue() ?: 0;
+                $totalToPay = $tenantInvoice->getAttribute('payment_total') ?: 0;
+
+                return ($totalToPay - $remaining); 
             }
             else if($attributeName == 'current_month') return Carbon::now()->formatLocalized('%B');
             else if($attributeName == 'next_month') return Carbon::now()->addMonth()->formatLocalized('%B');

@@ -42,13 +42,14 @@ class RentService
 
                 $today = Carbon::now();
                 $nextMonth = $today->addMonthNoOverflow()->firstOfMonth()->toDateString();
+                $nex2tMonth = $today->addMonths(2)->firstOfMonth()->toDateString();
 
                 $invoice = new Invoice();
                 $invoice->invoice_id = $newInvoiceId;
                 $invoice->property_id = $propertyId;
                 $invoice->unit_id = $propertyTenant->id_unit;
                 $invoice->invoice_month = $nextMonth;
-                $invoice->end_date = $nextMonth;
+                $invoice->end_date = $nex2tMonth;
                 $invoice->notes = "";
                 $invoice->status = 'ouvert';
                 $invoice->parent_id = $parentId;
@@ -172,8 +173,8 @@ class RentService
             return $is_sent;
             
         } catch (\Exception $e) {
-            dd($e);
             $this->handleException($destinataire, $sujet, $htmlContent, $e->getMessage());
+            dd($e);
         }
     }
 

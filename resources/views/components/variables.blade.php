@@ -7,8 +7,13 @@
             <span class='variable' onclick="copyContent(this, '{Last_Name}')">{Last_Name}</span>
             <span class='variable' onclick="copyContent(this, '{Tenant_Address}')">{Tenant_address}</span>
             <span class='variable' onclick="copyContent(this, '{Unit}')">{Unit}</span>
+            <span class='variable' onclick="copyContent(this, '{Country}')">{Country}</span>
+            <span class='variable' onclick="copyContent(this, '{City}')">{City}</span>
+            <span class='variable' onclick="copyContent(this, '{State}')">{State}</span>
+            <span class='variable' onclick="copyContent(this, '{Zip_code}')">{Zip_code}</span>
             <span class='variable' onclick="copyContent(this, '{Payment_Total}')">{Payment_Total}</span>
             <span class='variable' onclick="copyContent(this, '{Payment_Due}')">{Payment_Due}</span>
+            <span class='variable' onclick="copyContent(this, '{Received_amount}')">{Received_amount}</span>
             <span class='variable' onclick="copyContent(this, '{Due_Date}')">{Due_Date}</span>
             <span class='variable' onclick="copyContent(this, '{Current_Month}')">{Current_Month}</span>
             <span class='variable' onclick="copyContent(this, '{Next_Month}')">{Next_Month}</span>

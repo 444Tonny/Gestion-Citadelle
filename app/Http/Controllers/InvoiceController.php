@@ -256,6 +256,8 @@ class InvoiceController extends Controller
             $invoice = Invoice::find($invoice_id);
             if ($invoice->getDue() <= 0) {
                 $status = 'complet';
+
+                // envoyer quittance
             } else {
                 $status = 'partiel';
             }
