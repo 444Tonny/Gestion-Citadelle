@@ -53,9 +53,11 @@
                                     @endcan
                                     
                                     @can('delete invoice')
-                                        <button type='submit' style='background:none;border:none;'> 
-                                            <i data-feather="trash-2" style='color:red;'></i></a>
-                                        </button>
+                                        @if($template->is_deletable == 1)
+                                            <button type='submit' style='background:none;border:none;'> 
+                                                <i data-feather="trash-2" style='color:red;'></i></a>
+                                            </button>
+                                        @endif
                                     @endcan
                                 </form>
                                 </td>                        

@@ -19,7 +19,8 @@ class EmailTemplate extends Model
         'nom_modele',
         'sujet',
         'corps',
-        'parent_id'
+        'parent_id',
+        'is_deletable'
     ];
 
 }

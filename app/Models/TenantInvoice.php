@@ -97,6 +97,7 @@ class TenantInvoice extends Model
 
                 return ($totalToPay - $remaining); 
             }
+            else if ($attributeName == 'date_now') return Carbon::now()->toDateString();
             else if($attributeName == 'current_month') return Carbon::now()->formatLocalized('%B');
             else if($attributeName == 'next_month') return Carbon::now()->addMonth()->formatLocalized('%B');
             else if($attributeName == 'current_year') return Carbon::now()->format('Y');

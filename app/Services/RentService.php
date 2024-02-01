@@ -100,15 +100,13 @@ class RentService
         ];
     
         // Remplacer [Mois] par le mois actuel en français
-        $message = str_replace('[Mois]', $months['fr'][$currentMonth - 1], $message);
-        $message = str_replace('[mois]', $months['fr'][$currentMonth - 1], $message);
+        $message = str_ireplace('[Mois]', $months['fr'][$currentMonth - 1], $message);
     
         // Remplacer [Month] par le mois actuel en anglais
-        $message = str_replace('[Month]', $months['en'][$currentMonth - 1], $message);
-        $message = str_replace('[month]', $months['en'][$currentMonth - 1], $message);
+        $message = str_ireplace('[Month]', $months['en'][$currentMonth - 1], $message);
 
-        $message = str_replace('[Year]', $currentYear, $message);
-        $message = str_replace('[year]', $currentYear, $message);
+        $message = str_ireplace('[Year]', $currentYear, $message);
+        $message = str_replace('[Année]', $currentYear, $message);
     
         return $message;
     }

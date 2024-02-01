@@ -16,7 +16,7 @@ class SendQuittance extends Command
      *
      * @var string
      */
-    protected $signature = 'quittance:send {recipients} {template?} {parentid?}';
+    protected $signature = 'quittance:send {recipients} {invoiceid?} {template?} {parentid?}';
     protected $description = 'Send quittance to a given destinator.';
     protected $emailService;
 
@@ -40,29 +40,19 @@ class SendQuittance extends Command
         $recipientsArray = explode(',', $recipients);
 
         //$idTemplate = $this->argument('template');
-        $idTemplate = 20;
+        $idTemplate = 8;
         $parent_id = $this->argument('parentid');
-
-        dump($recipients);
+        $invoice_id = $this->argument('invoiceid');
         
-        foreach ($recipientsArray as $propertyID) {
-
-            dump($propertyID);
-
-            // Parcourir les id de propriété 
-            $this->rentService->generateRent($propertyID, $parent_id);
-
-            // Récupérer les utilisateurs/tenants actives de chaque propriété
-            
-            // Pour chacun, recupérer sles infos sur son unité ET générer une facture
-            
-            // Envoyer un email avec cette facture
-
+        foreach ($recipientsArray as $userID) 
+        {
             $template = EmailTemplate::find($idTemplate);
+            $tenantInvoice = TenantInvoice::where('invoice_id', '=', $invoice_id)->first();
 
-            // $emailContent = $user->replacePlaceholders($template->corps, 'UTF-8', 'ISO-8859-1');
+            $emailSubject = $this->emailService->replaceSubjectVariables($template->sujet, date('m', strtotime($tenantInvoice->invoice_month)));
+            $emailContent = $tenantInvoice->replacePlaceholders($template->corps, $tenantInvoice);
 
-            // $this->emailService->sendEmail($user, $template->sujet, $emailContent, null, $parent_id);
+            $this->emailService->sendEmail($tenantInvoice, $emailSubject, $emailContent, null, $parent_id);
         }
     }
 }

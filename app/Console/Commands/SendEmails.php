@@ -46,7 +46,7 @@ class SendEmails extends Command
             $user = TenantInvoice::find($recipient);
             $template = EmailTemplate::find($idTemplate);
 
-            $emailContent = $user->replacePlaceholders($template->corps, 'UTF-8', 'ISO-8859-1');
+            $emailContent = $user->replacePlaceholders($template->corps, null, 'UTF-8', 'ISO-8859-1');
 
             $this->emailService->sendEmail($user, $template->sujet, $emailContent, null, $parent_id);
         }

@@ -7,8 +7,10 @@ use App\Models\InvoiceItem;
 use App\Models\InvoicePayment;
 use App\Models\Property;
 use App\Models\Tenant;
+use App\Models\TenantInvoice;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class RentController extends Controller
 {
@@ -242,7 +244,6 @@ class RentController extends Controller
                     mkdir($dir, 0777, true);
                 }
                 $request->file('receipt')->storeAs('upload/receipt/', $receiptFileName);
-
             }
 
             $payment = new InvoicePayment();
@@ -256,14 +257,55 @@ class RentController extends Controller
             $payment->parent_id = \Auth::user()->parentId();
             $payment->save();
             $invoice = Invoice::find($invoice_id);
-            if ($invoice->getDue() <= 0) {
+            if ($invoice->getDue() <= 0) 
+            {
                 $status = 'complet';
-            } else {
+                                                
+                // envoyer quittance
+                // dd($payment->invoice_id);
+
+                try
+                {
+                    $idUserDestinataire = TenantInvoice::where('invoice_id', $payment->invoice_id)->first()->value('id');
+                }
+                catch (\Throwable $th) 
+                {
+                    $payment->delete();
+
+                    $invoice = Invoice::find($payment->invoice_id);
+                    if ($invoice->getDue() <= 0) {
+                        $status = 'complet';
+                    } elseif ($invoice->getDue()==$invoice->getSubTotal()) {
+                        $status = 'ouvert';
+                    } else {
+                        $status = 'partiel';
+                    }
+                    Invoice::statusChange($invoice->id, $status);
+                    
+                    return redirect()->back()->with('error', __('Une erreur est survenue, verifiez si le locataire est toujours actif'));
+                }
+
+                Artisan::call('quittance:send', [
+                    'recipients' => $idUserDestinataire,
+                    'invoiceid' => $invoice_id,
+                    'template' => 8,
+                    'parentid' => \Auth::user()->parentId()
+                ]);
+
+                Invoice::statusChange($invoice->id, $status);
+
+                return redirect()->back()->with('success', __('Paiement complet, la quittance de loyer a été envoyé.'));
+            } 
+            else 
+            {
                 $status = 'partiel';
             }
+
             Invoice::statusChange($invoice->id, $status);
             return redirect()->back()->with('success', __('Invoice payment successfully added.'));
-        } else {
+        } 
+        else 
+        {
             return redirect()->back()->with('error', __('Permission Denied!'));
         }
 

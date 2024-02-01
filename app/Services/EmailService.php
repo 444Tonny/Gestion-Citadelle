@@ -13,9 +13,10 @@ use Illuminate\Support\Facades\Mail;
 
 class EmailService
 {
-    public function replaceSubjectVariables($message)
+    public function replaceSubjectVariables($message, $month = null, $year = null)
     {    
-        $currentMonth = date('n'); // Numéro du mois actuel
+        $currentMonth = ($month !== null) ? $month : date('n'); // Numéro du mois actuel
+        $currentYear = ($year !== null) ? $year : date('y');
 
         $months = [
             'fr' => [
@@ -35,6 +36,9 @@ class EmailService
         // Remplacer [Month] par le mois actuel en anglais
         $message = str_replace('[Month]', $months['en'][$currentMonth - 1], $message);
     
+        $message = str_ireplace('[Year]', $currentYear, $message);
+        $message = str_ireplace('[Année]', $currentYear, $message);
+
         return $message;
     }
 

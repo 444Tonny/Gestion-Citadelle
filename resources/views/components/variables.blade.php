@@ -15,6 +15,7 @@
             <span class='variable' onclick="copyContent(this, '{Payment_Due}')">{Payment_Due}</span>
             <span class='variable' onclick="copyContent(this, '{Received_amount}')">{Received_amount}</span>
             <span class='variable' onclick="copyContent(this, '{Due_Date}')">{Due_Date}</span>
+            <span class='variable' onclick="copyContent(this, '{Due_Date}')">{Date_now}</span>
             <span class='variable' onclick="copyContent(this, '{Current_Month}')">{Current_Month}</span>
             <span class='variable' onclick="copyContent(this, '{Next_Month}')">{Next_Month}</span>
             <span class='variable' onclick="copyContent(this, '{Current_Year}')">{Current_Year}</span>

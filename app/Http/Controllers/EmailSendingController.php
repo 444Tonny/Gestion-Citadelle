@@ -136,7 +136,8 @@ class EmailSendingController extends Controller
 
     public function sendGroup(Request $request)
     {
-        try {
+        try 
+        {
             $selectedUsers = $request->input('selectedUsers');
 
             $sujet = $this->emailService->replaceSubjectVariables($request->input('sujet'));
@@ -151,7 +152,9 @@ class EmailSendingController extends Controller
                 return redirect()->route('emails.index')->with('success', 'Tous les emails ont été envoyés avec succès.');
             }
 
-        } catch (\Throwable $th) {
+        } 
+        catch (\Throwable $th) 
+        {
             return redirect()->route('emails.index')->with('error', 'Echec de certains envois.');
         }
     }

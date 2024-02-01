@@ -7,6 +7,7 @@ use App\Models\InvoiceItem;
 use App\Models\InvoicePayment;
 use App\Models\Property;
 use App\Models\Tenant;
+use App\Models\TenantInvoice;
 use App\Models\Type;
 use Illuminate\Http\Request;
 
@@ -254,11 +255,12 @@ class InvoiceController extends Controller
             $payment->parent_id = \Auth::user()->parentId();
             $payment->save();
             $invoice = Invoice::find($invoice_id);
-            if ($invoice->getDue() <= 0) {
+            if ($invoice->getDue() <= 0) 
+            {
                 $status = 'complet';
-
-                // envoyer quittance
-            } else {
+            } 
+            else 
+            {
                 $status = 'partiel';
             }
             Invoice::statusChange($invoice->id, $status);

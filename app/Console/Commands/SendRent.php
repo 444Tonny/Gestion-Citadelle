@@ -8,6 +8,7 @@ use App\Services\EmailService;
 use App\Services\RentService;
 use App\Models\EmailTemplate;
 use App\Models\User;
+use Illuminate\Support\Facades\Artisan;
 
 class SendRent extends Command
 {
@@ -53,16 +54,8 @@ class SendRent extends Command
             $this->rentService->generateRent($propertyID, $parent_id);
 
             // Récupérer les utilisateurs/tenants actives de chaque propriété
-            
             // Pour chacun, recupérer sles infos sur son unité ET générer une facture
-            
             // Envoyer un email avec cette facture
-
-            $template = EmailTemplate::find($idTemplate);
-
-            // $emailContent = $user->replacePlaceholders($template->corps, 'UTF-8', 'ISO-8859-1');
-
-            // $this->emailService->sendEmail($user, $template->sujet, $emailContent, null, $parent_id);
         }
     }
 }
