@@ -29,7 +29,7 @@
                             <tr>
                                 <th>Nº</th>
                                 <th>Nom</th>
-                                <th>Sujet</th>
+                                <th>Objet</th>
                                 @if(Gate::check('edit invoice') || Gate::check('delete invoice') || Gate::check('show invoice'))
                                     <th class="text-right">{{__('Action')}}</th>
                                 @endif

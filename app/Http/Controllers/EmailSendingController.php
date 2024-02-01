@@ -57,7 +57,7 @@ class EmailSendingController extends Controller
 
     public function chooseType()
     {
-        $templates = EmailTemplate::where('parent_id', '=', \Auth::user()->parentId())->pluck('nom_modele', 'id_modele');
+        $templates = EmailTemplate::all()->pluck('nom_modele', 'id_modele');
 
         return view('emails.typeForm', compact('templates'));
     }

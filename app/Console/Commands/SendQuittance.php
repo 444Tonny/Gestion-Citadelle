@@ -40,7 +40,7 @@ class SendQuittance extends Command
         $recipientsArray = explode(',', $recipients);
 
         //$idTemplate = $this->argument('template');
-        $idTemplate = 8;
+        $idTemplate = 25;
         $parent_id = $this->argument('parentid');
         $invoice_id = $this->argument('invoiceid');
         

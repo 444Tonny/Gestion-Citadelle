@@ -66,7 +66,7 @@ class RentAutomationController extends Controller
 
     public function chooseTemplate()
     {
-        $templates = EmailTemplate::where('parent_id', '=', \Auth::user()->parentId())->pluck('nom_modele', 'id_modele');
+        $templates = EmailTemplate::where('id_modele', '=', 20)->pluck('nom_modele', 'id_modele');
 
         return view('rentAuto.chooseTemplate', compact('templates'));
     }

@@ -15,7 +15,7 @@ class EmailTemplateController extends Controller
 
             if (\Auth::user()->can('manage templates')) 
             {
-                $emailTemplates = EmailTemplate::where('parent_id', '=', $user->parentId())->get();
+                $emailTemplates = EmailTemplate::all();
 
                 if(\Auth::user()->type=='tenant'){
                 }

@@ -65,7 +65,7 @@ class EmailAutomationController extends Controller
 
     public function chooseTemplate()
     {
-        $templates = EmailTemplate::where('parent_id', '=', \Auth::user()->parentId())->pluck('nom_modele', 'id_modele');
+        $templates = EmailTemplate::all()->pluck('nom_modele', 'id_modele');
 
         return view('emailsAuto.newAutoForm', compact('templates'));
     }
