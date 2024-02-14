@@ -19,6 +19,8 @@ class Invoice extends Model
         'status',
         'notes',
         'parent_id',
+        'last_name',
+        'first_name',
     ];
 
     public static $status = [

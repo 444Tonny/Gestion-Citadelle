@@ -21,14 +21,18 @@ class RentController extends Controller
             if(\Auth::user()->type=='tenant')
             {
                 $tenant=Tenant::where('user_id',\Auth::user()->id)->first();
-                $invoices = Invoice::where('property_id',$tenant->property)->where('unit_id',$tenant->unit)->where('parent_id', \Auth::user()->parentId())->get();
+                $invoices = Invoice::where('property_id',$tenant->property)
+                                ->where('unit_id',$tenant->unit)
+                                ->where('parent_id', \Auth::user()
+                                ->parentId())
+                            ->get();
             }
             else
             {
-                $invoices = Invoice::where('parent_id', \Auth::user()->parentId())
-                ->whereIn('id', function ($query) {
-                    $query->select('id')->from('v_rents');
-                })->get();
+                $invoices = Invoice::select('invoices.*', 'v_rents.first_name', 'v_rents.last_name')
+                            ->join('v_rents', 'invoices.id', '=', 'v_rents.id')
+                            ->where('invoices.parent_id', \Auth::user()->parentId())
+                            ->get();
             }
 
             return view('rent.index', compact('invoices'));

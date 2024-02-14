@@ -29,6 +29,7 @@
                             <th>{{__('Invoice')}}</th>
                             <th>{{__('Property')}}</th>
                             <th>{{__('Unit')}}</th>
+                            <th>{{__('Tenant')}}</th>
                             <th>{{__('Invoice Month')}}</th>
                             <th>{{__('End Date')}}</th>
                             <th>{{__('Amount')}}</th>
@@ -44,6 +45,7 @@
                                 <td>{{\App\Models\Custom::invoicePrefix().$invoice->invoice_id}} </td>
                                 <td>{{!empty($invoice->properties)?$invoice->properties->name:'-'}} </td>
                                 <td>{{!empty($invoice->units)?$invoice->units->name:'-'}}  </td>
+                                <td>{{$invoice->first_name}} {{$invoice->last_name}}</td>
                                 <td>{{date('F Y',strtotime($invoice->invoice_month))}} </td>
                                 <td>{{\Auth::user()->dateFormat($invoice->end_date)}} </td>
                                 <td>{{\Auth::user()->priceFormat($invoice->getSubTotal())}}</td>
