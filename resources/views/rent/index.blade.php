@@ -1,4 +1,22 @@
 @extends('layouts.app')
+<style>
+    .dataTable tfoot th input {
+    width: 100%; /* Ajustez cette valeur en fonction de vos besoins */
+    height: 33px !important;
+    font-size: 13px;
+    color: #4d4d4d;
+    padding-left: 6px;
+}
+
+    #searchByName
+    {
+        height: 60px !important;
+    }
+</style>  
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/1.3.0/css/searchPanes.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css">
+
 @section('page-title')
     {{__('Rent')}}
 @endsection
@@ -19,12 +37,21 @@
     @endcan
 @endsection
 @section('content')
+
+    <script type="text/javascript" src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+    <script type="text/javascript" src=https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js></script>
+    <script type="text/javascript" src=https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js></script>
+    <script type="text/javascript" src=https://cdn.datatables.net/searchpanes/2.1.1/js/dataTables.searchPanes.min.js></script>
+    <script src=https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js></script>
+
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <table class="display dataTable cell-border datatbl-advance">
-                        <thead>
+    
+        
+                <table class="display dataTable cell-border datatbl-advance">
+                    <thead>
                         <tr>
                             <th>{{__('Invoice')}}</th>
                             <th>{{__('Property')}}</th>
@@ -38,8 +65,9 @@
                                 <th class="text-right">{{__('Action')}}</th>
                             @endif
                         </tr>
-                        </thead>
-                        <tbody>
+                    </thead>
+
+                    <tbody>
                         @foreach($invoices as $invoice)
                             <tr role="row">
                                 <td>{{\App\Models\Custom::invoicePrefix().$invoice->invoice_id}} </td>
@@ -95,9 +123,78 @@
                             </tr>
                         @endforeach
 
-                        </tbody>
+                    </tbody>
 
-                    </table>
+                    <tfoot>
+                        <tr>
+                            <th>Invoice</th>
+                            <th>Propriété</th>
+                            <th>Unité</th>
+                            <th>Locataire</th>
+                            <th>Mois</th>
+                            <th class='no-filter'>-</th>
+                            <th class='no-filter'>-</th>
+                            <th>Status</th>
+                            <th class='no-filter'>-</th>
+                        </tr>
+                    </tfoot>
+                    
+                </table>
+                <script>
+       
+                        $(document).ready(function () {
+                            
+                            var existingOptions = {};
+
+                            setTimeout(function() {
+
+                                if ($.fn.DataTable.isDataTable('.dataTable')) {
+                                    //alert("Instance exists");
+
+                                    existingOptions = $('.dataTable').DataTable().init();
+                                    console.log(existingOptions);
+                                    $('.dataTable').DataTable().destroy();
+                                }
+
+                                var newOptions = $.extend(true, {}, existingOptions, {
+                                    layout: {
+                                        top1: 'searchPanes'
+                                    },
+                                    dom: 'Pfrtip',
+                                    select: true
+                                });
+                                     
+                                var table = $('#DataTables_Table_0').DataTable(newOptions);
+                                var searchPanes = table.searchPanes();
+
+                                // Setup - add a text input to each footer cell
+                                $('.dataTable tfoot th').each(function (i) {
+                                        if (!$(this).hasClass('no-filter')) {
+                                        var title = $('.dataTable thead th')
+                                            .eq($(this).index())
+                                            .text();
+                                        $(this).html(
+                                            '<input type="text" placeholder="' + title + '" data-index="' + i + '" />'
+                                        );
+                                    }
+                                });
+
+                                $(document).on('keyup', '.dataTables_scrollFoot tfoot input', function () {
+
+                                    var columnIndex = $(this).data('index') - 9;  //doublon tableau
+                                    var searchTerm = this.value;
+
+                                    // Use a regular expression for exact match for column index 7
+                                    if (columnIndex === 7) {
+                                        searchTerm = '^' + searchTerm;
+                                    }
+
+                                    table.column(columnIndex).search(searchTerm, true, false).draw();
+                                });
+
+                            }, 100);
+                        });
+                    </script>
                 </div>
             </div>
         </div>
